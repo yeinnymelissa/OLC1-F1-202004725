@@ -1,6 +1,7 @@
 import * as React from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { useState } from 'react';
+import Tab from './Tab';
 function Editor(){
     var contador = 0; 
     function newTab(){
@@ -117,16 +118,13 @@ function Editor(){
     const [tabContentList, setTabContentList] = useState([{ tabContent:""}]);
 
     
-    let id_ = "lps"+contador+"-tab";
+    /*let id_ = "lps"+contador+"-tab";
     let data_target = "#lps"+contador;
-    let aria_controls = "lps"+contador;
+    let ariaControls = "lps"+contador;*/
+    
 
     const handleTabAdd = () => {
         contador++;
-        id_ = "lps"+contador+"-tab";
-        data_target = "#lps"+contador;
-        aria_controls = "lps"+contador;
-        console.log(id_)
         const li_ = document.querySelectorAll('.li');
         const bloque = document.querySelectorAll('.bloque');
         //console.log(li_)
@@ -152,37 +150,48 @@ function Editor(){
         setTabList([...tabList, { tab:"" }]);
         setTabContentList([...tabContentList, { tabContent:"" }]);
 
+        console.log(li_)
+
+        li_.forEach((cadaLi, i)=>{
+            li_[i].id = "lps"+i+"-tab";
+            var data_bs_target = document.createAttribute("data-bs-target");
+            data_bs_target.value = "#lps"+i;
+            li_[i].setAttributeNode(data_bs_target);
+            var aria_controls = document.createAttribute("aria-controls");
+            aria_controls.value = "lps"+i;
+            li_[i].setAttributeNode(aria_controls);
+            bloque[i].id="lps"+i;
+            var aria_labelledby = document.createAttribute("aria-labelledby");
+            aria_labelledby.value = "lps"+i+"-tab";
+            bloque[i].setAttributeNode(aria_labelledby);
+        });
         
     };
     
     return (
-        <div>
-            <div className="editorE">
-                <ul className="nav nav-tabs" id="myTab" role="tablist">
-                    <div id="tabs" className="nav nav-tabs">
-                        {tabList.map((singleTab, index) => (
-                            <li key={index} className="nav-item" role="presentation">
-                                <button className="li nav-link active" id={id_} data-bs-toggle="tab" data-bs-target={data_target} type="button" role="tab" aria-controls={aria_controls} aria-selected="false">LFScript</button>
-                            </li>
-                        ))}
-                    </div>
-                    <li className="nav-item" role="presentation">
-                        <button className="nav-link" id="new-tab" type="button" role="new-tab" onClick={handleTabAdd}>+</button>
-                    </li>
-                </ul>
-                <div className="tab-content" id="myTabContent">
-                    {tabContentList.map((singleTabContent, index) => (
-                        <div key={index} className="bloque tab-pane fade show active" id={aria_controls} role="tabpanel" aria-labelledby={id_}>
-                            <CodeMirror
-                                value=""
-                                options={{
-                                    keyMap: 'sublime',
-                                    mode: 'jsx',
-                                }}
-                            />
-                        </div>
+        <div className="editorE">
+            <ul className="nav nav-tabs" id="myTab" role="tablist">
+                <div id="tabs" className="nav nav-tabs">
+                    {tabList.map((singleTab, index) => (
+                        <Tab key={index} id="lps-tab" data_target="#lps" ariaControls="lps" />
                     ))}
                 </div>
+                <li className="nav-item" role="presentation">
+                    <button className="nav-link" id="new-tab" type="button" role="new-tab" onClick={handleTabAdd}>+</button>
+                </li>
+            </ul>
+            <div className="tab-content" id="myTabContent">
+                {tabContentList.map((singleTabContent, index) => (
+                    <div key={index} className="bloque tab-pane fade show active" id="lps" role="tabpanel" aria-labelledby="lps-tab">
+                        <CodeMirror
+                            value=""
+                            options={{
+                                keyMap: 'sublime',
+                                mode: 'jsx',
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
         </div>
     );
