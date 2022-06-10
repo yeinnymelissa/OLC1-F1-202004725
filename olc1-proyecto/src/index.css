@@ -1,0 +1,123 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.log{
+  display: flex;
+  align-items: center;
+}
+
+.alineacion-superior{
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  justify-content: center;
+}
+
+
+.titulo{
+  font-size: xx-large;
+  display: inline-block;
+}
+
+.logo{
+  width: 7%;
+  height: 60%;
+  display: inline-block;
+}
+
+.img{
+  width: 100%;
+  height: 100%;
+}
+
+.superior{
+  width: 100%;
+  height: 10%;
+  margin-top: 1%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.botones{
+  position: absolute;
+  display: inline-block;
+  margin: 3%;
+}
+
+.izq{
+  float: left;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+textarea{
+  resize: none;
+  height: 500px;
+  width: 90%;
+  float: right;
+  margin-left: 50px;
+}
+
+#editor{
+  width: 100%;
+  height: 100%;
+}
+
+#numeracion{
+  display: block;
+  float: left;
+  width: 10%;
+  max-height: 30px;
+  background-color: blue;
+  position: absolute;
+}
+
+#codigo{
+  height: 500px;
+  width: 90%;
+  float: right;
+}
+ 
+
+.margen-num{
+  width: 5%;
+}
+
+.margen-cod{
+  width: 95%;
+}
+
+.ancho-cel{
+  height: 25px;
+}
+
+.numeracion{
+  display: block;
+  float: left;
+}
+
+.codigo{
+  float: right;
+}
+
+.editorE{
+  display: inline-block;
+  width: 50%;
+  height: 80%;
+
+  margin-top: 100px;
+}
+

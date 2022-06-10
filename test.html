@@ -1,0 +1,40 @@
+<html>
+<head>
+<style>
+.main-div {
+  height: 200px;
+}
+</style>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+	<script>
+	$(document).ready(function() {
+		var linesCounter = 2;
+		
+		$(document).on("keypress", ".main-text input[type='text']", function(event) {
+			var keycode = (event.keyCode ? event.keyCode : event.which);
+			if(keycode == '13'){
+				$(".main-text").append("<input type='text'></input>");
+				$(this).next('input[type="text"]').focus();
+				$(".lines-number").append("<div>"+(linesCounter++)+"</div>");
+			};
+		});
+		
+	});
+	</script>
+</head>
+<body>
+	<div class="container main-div" style="height:50;">
+		<div class="row">
+			<div class="col lines-number">
+				<div>1</div>
+			</div>
+			<div class="col main-text">
+				<input type="text" value="Test"></input>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

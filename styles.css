@@ -1,0 +1,60 @@
+textarea{
+    resize: none;
+    height: 500px;
+    width: 90%;
+    float: right;
+    margin-left: 50px;
+}
+
+#editor{
+    width: 100%;
+    height: 100%;
+}
+
+#numeracion{
+    display: block;
+    float: left;
+    width: 10%;
+    max-height: 30px;
+    background-color: blue;
+    position: absolute;
+}
+
+#codigo{
+    height: 500px;
+    width: 90%;
+    float: right;
+}
+
+
+.main-div {
+    display: inline-block;
+}
+
+input{
+    width: 100%;
+    font-size: small;
+    height: 25px;
+}  
+
+.margen-num{
+    width: 5%;
+}
+
+.margen-cod{
+    width: 95%;
+}
+
+.ancho-cel{
+    height: 25px;
+}
+
+.numeracion{
+    display: block;
+    float: left;
+}
+
+.codigo{
+    float: right;
+}
+
