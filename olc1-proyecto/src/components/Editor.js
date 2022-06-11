@@ -183,13 +183,15 @@ function Editor(){
             <div className="tab-content" id="myTabContent">
                 {tabContentList.map((singleTabContent, index) => (
                     <div key={index} className="bloque tab-pane fade show active" id="lps" role="tabpanel" aria-labelledby="lps-tab">
-                        <CodeMirror
-                            value=""
-                            options={{
-                                keyMap: 'sublime',
-                                mode: 'jsx',
-                            }}
-                        />
+                        <div id='codeMirror' className='codeMirror'>
+                            <CodeMirror
+                                value=""
+                                options={{
+                                    keyMap: 'sublime',
+                                    mode: 'jsx',
+                                }}
+                            />
+                        </div>
                     </div>
                 ))}
             </div>
