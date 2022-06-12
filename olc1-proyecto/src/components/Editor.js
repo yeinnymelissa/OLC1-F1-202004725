@@ -117,11 +117,7 @@ function Editor(){
     const [tabList, setTabList] = useState([{ tab:""}]);
     const [tabContentList, setTabContentList] = useState([{ tabContent:""}]);
 
-    
-    /*let id_ = "lps"+contador+"-tab";
-    let data_target = "#lps"+contador;
-    let ariaControls = "lps"+contador;*/
-    
+    const [valueCode, setvalueCode] = useState("");
 
     const handleTabAdd = () => {
         contador++;
@@ -169,31 +165,64 @@ function Editor(){
     };
     
     return (
-        <div className="editorE">
-            <ul className="nav nav-tabs" id="myTab" role="tablist">
-                <div id="tabs" className="nav nav-tabs">
-                    {tabList.map((singleTab, index) => (
-                        <Tab key={index} id="lps-tab" data_target="#lps" ariaControls="lps" />
-                    ))}
+        <div className='todo'>
+            <div className="botones">
+                <button type="button" className="btn btn-primary izq" >Abrir</button>
+                <div className="dropdown izq">
+                    <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                        Guardar
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><button className="dropdown-item" type="button">Guardar</button></li>
+                        <li><button className="dropdown-item" type="button">Guardar como...</button></li>
+                    </ul>
                 </div>
-                <li className="nav-item" role="presentation">
-                    <button className="nav-link" id="new-tab" type="button" role="new-tab" onClick={handleTabAdd}>+</button>
-                </li>
-            </ul>
-            <div className="tab-content" id="myTabContent">
-                {tabContentList.map((singleTabContent, index) => (
-                    <div key={index} className="bloque tab-pane fade show active" id="lps" role="tabpanel" aria-labelledby="lps-tab">
-                        <div id='codeMirror' className='codeMirror'>
-                            <CodeMirror
-                                value=""
-                                options={{
-                                    keyMap: 'sublime',
-                                    mode: 'jsx',
-                                }}
-                            />
+                <div className="dropdown izq">
+                    <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                        Reportes
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><button className="dropdown-item" type="button">Reporte AST</button></li>
+                        <li><button className="dropdown-item" type="button">Reporte de errores</button></li>
+                        <li><button className="dropdown-item" type="button">Reporte TS</button></li>
+                    </ul>
+                </div>                
+            </div>
+            <div className="editCom">
+                <div className="editorE">
+                    <ul className="nav nav-tabs prueba" id="myTab" role="tablist">
+                        <div id="tabs" className="nav nav-tabs">
+                            {tabList.map((singleTab, index) => (
+                                <Tab key={index} id="lps-tab" data_target="#lps" ariaControls="lps" />
+                            ))}
                         </div>
-                    </div>
-                ))}
+                        <li className="nav-item" role="presentation">
+                            <button className="nav-link" id="new-tab" type="button" role="new-tab" onClick={handleTabAdd}>+</button>
+                        </li>
+                    </ul>
+                    <div className="tab-content" id="myTabContent">
+                        {tabContentList.map((singleTabContent, index) => (
+                            <div key={index} className="bloque tab-pane fade show active" id="lps" role="tabpanel" aria-labelledby="lps-tab">
+                                <div id='codeMirror' className='codeMirror'>
+                                    <CodeMirror
+                                        value={valueCode}
+                                        options={{
+                                            mode: 'jsx',
+                                        }}
+                                        height="395px"
+                                        onChange={(value, viewUpdate) => {
+                                            console.log('value:', value);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>        
+                </div>
+                <div id="consola" className="consola">
+                    <textarea name="textarea" readOnly>
+                    </textarea>
+                </div>            
             </div>
         </div>
     );

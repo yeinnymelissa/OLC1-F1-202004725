@@ -1,0 +1,10 @@
+<ul className="nav nav-tabs prueba" id="myTab" role="tablist">
+                        <div id="tabs" className="nav nav-tabs">
+                            {tabList.map((singleTab, index) => (
+                                <Tab key={index} id="lps-tab" data_target="#lps" ariaControls="lps" />
+                            ))}
+                        </div>
+                        <li className="nav-item" role="presentation">
+                            <button className="nav-link" id="new-tab" type="button" role="new-tab" onClick={handleTabAdd}>+</button>
+                        </li>
+                    </ul>
