@@ -1,146 +1,52 @@
 import * as React from 'react';
 import CodeMirror from '@uiw/react-codemirror';
+import FileSaver from "file-saver";
 import { useState } from 'react';
 import Tab from './Tab';
-function Editor(){
-    var contador = 0; 
-    function newTab(){
-        const li_ = document.querySelectorAll('.li');
-        const bloque = document.querySelectorAll('.bloque');
-    
-        li_.forEach((cadaLi, i)=>{
-            li_[i].classList.remove('active');
-            bloque[i].classList.remove('show');
-            bloque[i].classList.remove('active');
-        })
-    
-        contador++;
-        const tabs = document.querySelector("#tabs");
-        const li = document.createElement("li");
-        li.classList.add("nav-item");
-    
-        var roleP = document.createAttribute("role");
-        roleP.value = "presentation";
-        li.setAttributeNode(roleP);
-    
-        const button = document.createElement("button");
-    
-        button.className = "li nav-link";
-    
-        button.id = "ventana"+contador+"-tab";
-    
-        var data_bs_toggle = document.createAttribute("data-bs-toggle");
-        data_bs_toggle.value = "tab";
-        button.setAttributeNode(data_bs_toggle);
-    
-        var data_bs_target = document.createAttribute("data-bs-target");
-        data_bs_target.value = "#ventana"+contador;
-        button.setAttributeNode(data_bs_target);
-    
-        var aria_controls = document.createAttribute("aria-controls");
-        aria_controls.value = "ventana"+contador;
-        button.setAttributeNode(aria_controls);
-    
-        button.type = "button";
-    
-    
-        button.innerHTML = 'LFScript '+ contador;
-    
-        li.appendChild(button);
-    
-        tabs.appendChild(li);
-    
-        const tabsContent = document.querySelector("#myTabContent");
-    
-        const div = document.createElement("div");
-    
-        div.className = "bloque tab-pane fade";
-        
-        div.id = "ventana"+contador;
-    
-        var role = document.createAttribute("role");
-        role.value = "tabpanel";
-        div.setAttributeNode(role);    
-    
-        var aria_labelledby = document.createAttribute("aria-labelledby");
-        aria_labelledby.value = "ventana"+contador+"-tab";
-        div.setAttributeNode(aria_labelledby);   
-        
-        /*const text_ventana = document.createElement("textarea");
-    
-        text_ventana.id = "code"+contador;
-    
-        text_ventana.name = "code"+contador;
-    
-        var columna = document.createAttribute("cols");
-        columna.value = "30";
-        text_ventana.setAttributeNode(columna);   
-    
-        var fila = document.createAttribute("rows");
-        fila.value = "10";
-        text_ventana.setAttributeNode(fila);  */ 
 
+function Editor(){
+    
+    const [valueCode, setvalueCode] = useState("");
+
+    function leerArchivo(e) {
+
+        const li_ = document.querySelectorAll('.li');
+        const editor = document.querySelectorAll('.editor-codigo');
+
+        li_.forEach((cadaLi, i)=>{
+            if(li_[i].classList.contains("active")){
+                var archivo = e.target.files[0];
+                if (!archivo) {
+                return;
+                }
+                var lector = new FileReader();
+                lector.onload = function(e) {
+                var contenido = e.target.result;
+                setvalueCode(contenido);
+                };
+                lector.readAsText(archivo);
+            }
+        })
         
-        const text_ventana = document.createElement("div");
-        text_ventana.id="lfs"+contador;
         
-        div.appendChild(text_ventana);
+      }
       
-        tabsContent.appendChild(div)
-    
-        var ob = document.querySelector('#ventana'+contador+'-tab');
-        ob.classList.add("active");
-    
-        var ob2 = document.querySelector('#ventana'+contador);
-        ob2.classList.add("show");
-        ob2.classList.add("active");
-        
-    
-        /*const myTextarea = document.querySelector('#code'+contador);
-    
-        let editor_ventana = CodeMirror.fromTextArea(myTextarea, {
-            lineNumbers: true
-        }); */
-        
-    
-    }
-    
-    /*const myTextarea = document.querySelector('#prueba');
-    
-    // Instanciamos el editor de código con la librería de CodeMirror
-    // código traído de la CDN.
-    let editor = CodeMirror.fromTextArea(myTextarea, {
-        lineNumbers: true
-      
-    });*/
+      function mostrarContenido(contenido) {
+        setvalueCode(contenido);
+      }
 
     const [tabList, setTabList] = useState([{ tab:""}]);
     const [tabContentList, setTabContentList] = useState([{ tabContent:""}]);
 
-    const [valueCode, setvalueCode] = useState("");
-
     const handleTabAdd = () => {
-        contador++;
         const li_ = document.querySelectorAll('.li');
         const bloque = document.querySelectorAll('.bloque');
-        //console.log(li_)
+        const editor = document.querySelectorAll('.editor-codigo');
         li_.forEach((cadaLi, i)=>{
             console.log(li_[i])
             li_[i].classList.remove('active');
             bloque[i].classList.remove('show');
             bloque[i].classList.remove('active');
-            /*li_[i].id = "lps"+i+"-tab";
-            var data_bs_target = document.createAttribute("data-bs-target");
-            data_bs_target.value = "#lps"+i;
-            li_[i].setAttributeNode(data_bs_target);
-            var aria_controls = document.createAttribute("aria-controls");
-            aria_controls.value = "lps"+i;
-            li_[i].setAttributeNode(aria_controls);
-            li_[i].innerHTML = "LFScript"+i;
-            bloque[i].id="lps"+i;
-            var aria_labelledby = document.createAttribute("aria-labelledby");
-            aria_labelledby.value = "lps"+i+"-tab";
-            bloque[i].setAttributeNode(aria_labelledby);*/
         })
     
         setTabList([...tabList, { tab:"" }]);
@@ -160,21 +66,29 @@ function Editor(){
             var aria_labelledby = document.createAttribute("aria-labelledby");
             aria_labelledby.value = "lps"+i+"-tab";
             bloque[i].setAttributeNode(aria_labelledby);
+            editor[i].id= "editor-codigo"+i;
         });
         
     };
+
+    function guardarComo(){
+        var blob = new Blob([valueCode], {
+            type: "text/plain;charset=utf-8"
+        });
+        FileSaver.saveAs(blob, "hello world.lf");
+    }
     
     return (
         <div className='todo'>
             <div className="botones">
-                <button type="button" className="btn btn-primary izq" >Abrir</button>
+                <input type="file" accept='.lf' id="abrir" className="btn btn-primary izq" onChange={leerArchivo}/>
                 <div className="dropdown izq">
                     <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
                         Guardar
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
                         <li><button className="dropdown-item" type="button">Guardar</button></li>
-                        <li><button className="dropdown-item" type="button">Guardar como...</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={guardarComo}>Guardar como...</button></li>
                     </ul>
                 </div>
                 <div className="dropdown izq">
@@ -213,6 +127,9 @@ function Editor(){
                                         onChange={(value, viewUpdate) => {
                                             console.log('value:', value);
                                         }}
+                                        autoFocus="true"
+                                        id='lps-code'
+                                        className='editor-codigo'
                                     />
                                 </div>
                             </div>
@@ -220,7 +137,7 @@ function Editor(){
                     </div>        
                 </div>
                 <div id="consola" className="consola">
-                    <textarea name="textarea" readOnly>
+                    <textarea id='console' name="textarea" readOnly>
                     </textarea>
                 </div>            
             </div>
