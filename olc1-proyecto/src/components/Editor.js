@@ -16,6 +16,8 @@ function Editor(){
         li_.forEach((cadaLi, i)=>{
             if(li_[i].classList.contains("active")){
                 var archivo = e.target.files[0];
+                var tmppath = URL.createObjectURL(e.target.files[0]);
+                console.log(tmppath)
                 if (!archivo) {
                 return;
                 }
@@ -27,9 +29,7 @@ function Editor(){
                 lector.readAsText(archivo);
             }
         })
-        
-        
-      }
+    }
       
       function mostrarContenido(contenido) {
         setvalueCode(contenido);
@@ -75,7 +75,7 @@ function Editor(){
         var blob = new Blob([valueCode], {
             type: "text/plain;charset=utf-8"
         });
-        FileSaver.saveAs(blob, "hello world.lf");
+        FileSaver.saveAs(blob, "archivoLFScript.lf");
     }
     
     return (
@@ -116,22 +116,20 @@ function Editor(){
                     </ul>
                     <div className="tab-content" id="myTabContent">
                         {tabContentList.map((singleTabContent, index) => (
-                            <div key={index} className="bloque tab-pane fade show active" id="lps" role="tabpanel" aria-labelledby="lps-tab">
-                                <div id='codeMirror' className='codeMirror'>
-                                    <CodeMirror
-                                        value={valueCode}
-                                        options={{
-                                            mode: 'jsx',
-                                        }}
-                                        height="395px"
-                                        onChange={(value, viewUpdate) => {
-                                            console.log('value:', value);
-                                        }}
-                                        autoFocus="true"
-                                        id='lps-code'
-                                        className='editor-codigo'
-                                    />
-                                </div>
+                            <div key={index} className="bloque tab-pane fade show active" id="lps" role="tabpanel" codevalue="" aria-labelledby="lps-tab">
+                                <CodeMirror
+                                    value={valueCode}
+                                    options={{
+                                        mode: 'jsx',
+                                    }}
+                                    height="395px"
+                                    onChange={(value, viewUpdate) => {
+                                        console.log('value:', value);
+                                    }}
+                                    autoFocus="true"
+                                    id='lps-code'
+                                    className='editor-codigo'
+                                />
                             </div>
                         ))}
                     </div>        

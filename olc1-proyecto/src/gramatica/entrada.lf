@@ -1,0 +1,28 @@
+int agua = 2;
+const string hola= "";
+char x, y, z = 'i';
+x='u';
+int gol= 1;
+
+if(true){
+    int a = 0;
+
+}
+
+if(true){
+    int a = 0;
+}else{
+    int b = 22;
+}
+
+if(true){
+    int a = 0;
+}else if(true){
+    int b = 22;
+}else if (false){
+    int o = 10;
+}else if (false){
+    int r = 10;
+}else{
+    int r = 10;
+}
