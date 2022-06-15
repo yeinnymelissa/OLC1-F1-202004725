@@ -185,23 +185,27 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION
                 | INSTRUCCION
 ;
 
-INSTRUCCION : DECLARACION 
-            | ASIGNACION
-            | IFCOMPLETO
+INSTRUCCION : DECLARACION ptComa
+            | ASIGNACION ptComa
+            | SENTENCIAIF
+;
+
+INSTRUCCIONIFSIMPLE : DECLARACION 
+                    | ASIGNACION 
 ;
 
 DECLARACION : DECLARACIONNORMAL
             | DECLARACIONCONSTANTE
 ;
 
-DECLARACIONNORMAL: TIPODATO IDS igual IGUALACIONDEDATO ptComa {console.log($1 + " " + $2 + " " + $3 + " " + $4 + " " + $5)}
+DECLARACIONNORMAL: TIPODATO IDS igual IGUALACIONDEDATO  {console.log($1 + " " + $2 + " " + $3 + " " + $4 )}
 ;
 
 
 DECLARACIONCONSTANTE: CONST DECLARACIONNORMAL 
 ;
 
-ASIGNACION : id igual IGUALACIONDEDATO ptComa {console.log($1 + " " + $2 + " " + $3 + " " + $4 )}
+ASIGNACION : id igual IGUALACIONDEDATO  {console.log($1 + " " + $2 + " " + $3 )}
 ;
 
 IDS: IDS coma id  { $1.push($3);$$=$1;}
@@ -227,13 +231,19 @@ IFCOMPLETO: SENTENCIAIF SENTENCIAELSEIF
             | SENTENCIAIF
 ;
 
-SENTENCIAIF: IF parentesisA booleano parentesisC llaveA INSTRUCCIONES llaveC
+SENTENCIAIF: IF parentesisA booleano parentesisC VARIOSIF
 ;
 
-SENTENCIAELSEIF: SENTENCIAELSEIF ELSE SENTENCIAIF
+SENTENCIAELSEIF: SENTENCIAELSEIF ELSE IF parentesisA booleano parentesisC llaveA INSTRUCCIONES llaveC
                 | SENTENCIAELSEIF ELSE llaveA INSTRUCCIONES llaveC
-                | ELSE SENTENCIAIF
-                | ELSE llaveA INSTRUCCIONES llaveC
+                |
 ;
 
+SENTENCIAELSEIFSIMPLE: SENTENCIAELSEIFSIMPLE ELSE IF parentesisA booleano parentesisC INSTRUCCIONIFSIMPLE ptComa
+                    | SENTENCIAELSEIFSIMPLE ELSE INSTRUCCIONIFSIMPLE ptComa
+                    |
+;
 
+VARIOSIF: llaveA INSTRUCCIONES llaveC SENTENCIAELSEIF
+        | INSTRUCCIONIFSIMPLE ptComa SENTENCIAELSEIFSIMPLE
+;

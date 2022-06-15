@@ -9,20 +9,22 @@ if(true){
 
 }
 
-if(true){
-    int a = 0;
+if(true) x = 0; 
+
+if(false){
+    agua = 3;
 }else{
-    int b = 22;
+    agua = 4;
 }
 
+int hola = 2;
+
 if(true){
-    int a = 0;
+    hola = 5;
 }else if(true){
-    int b = 22;
-}else if (false){
-    int o = 10;
-}else if (false){
-    int r = 10;
-}else{
-    int r = 10;
+    hola = 10;
+}else if(true){
+    hola = 13;
+}else if(false){
+    hola = 3;
 }
