@@ -56,7 +56,19 @@ bool    "true"|"false"
                                     }   
 "else"                              {
                                         return 'ELSE';
-                                    }                                                                      
+                                    }  
+"switch"                            {
+                                        return 'SWITCH';
+                                    }   
+"case"                              {
+                                        return 'CASE';
+                                    } 
+"default"                           {
+                                        return 'DEFAULT';
+                                    }   
+"break"                             {
+                                        return 'BREAK';
+                                    }                                                                                                                                             
 ([a-zA-Z])[a-zA-Z0-9_]*             {
                                         return 'id';
                                     } 
@@ -188,6 +200,8 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION
 INSTRUCCION : DECLARACION ptComa
             | ASIGNACION ptComa
             | SENTENCIAIF
+            | SENTENCIASWITCH
+            | BREAK ptComa
 ;
 
 INSTRUCCIONIFSIMPLE : DECLARACION 
@@ -227,10 +241,6 @@ IGUALACIONDEDATO: entero
 ;
 
 
-IFCOMPLETO: SENTENCIAIF SENTENCIAELSEIF
-            | SENTENCIAIF
-;
-
 SENTENCIAIF: IF parentesisA booleano parentesisC VARIOSIF
 ;
 
@@ -246,4 +256,21 @@ SENTENCIAELSEIFSIMPLE: SENTENCIAELSEIFSIMPLE ELSE IF parentesisA booleano parent
 
 VARIOSIF: llaveA INSTRUCCIONES llaveC SENTENCIAELSEIF
         | INSTRUCCIONIFSIMPLE ptComa SENTENCIAELSEIFSIMPLE
+;
+
+SENTENCIASWITCH: SWITCH parentesisA id parentesisC llaveA CASOS llaveC
+;
+
+CASOS: CASOS CASO
+    | CASO
+;
+
+CASO: CASE IGUALACIONDEDATO dosPuntos INSTRUCCIONES
+    | DEFAULT dosPuntos INSTRUCCIONES
+;
+
+
+
+VARIABLEFOR : DECLARACION ptComa
+            | ASIGNACION ptComa
 ;

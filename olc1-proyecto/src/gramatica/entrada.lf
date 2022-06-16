@@ -28,3 +28,12 @@ if(true){
 }else if(false){
     hola = 3;
 }
+
+switch(hola){
+    case 1: hola=0;
+            break;
+    case 2: hola = 1;
+            x= 1; 
+            y = 3;
+    default: break;
+}
