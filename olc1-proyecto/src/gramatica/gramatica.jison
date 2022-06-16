@@ -68,7 +68,10 @@ bool    "true"|"false"
                                     }   
 "break"                             {
                                         return 'BREAK';
-                                    }                                                                                                                                             
+                                    }  
+"for"                               {
+                                        return 'FOR';
+                                    }                                                                                                                                                                             
 ([a-zA-Z])[a-zA-Z0-9_]*             {
                                         return 'id';
                                     } 
@@ -87,11 +90,11 @@ bool    "true"|"false"
 "\\t"                               {
                                         return 'tabulacion'
                                     }                                                                                                                                                                
+"=="                                 {
+                                        return 'igualDoble'
+                                    }
 "="                                 {
                                         return 'igual'
-                                    }
-"=="                                {
-                                        return 'igualDoble'
                                     }
 "!="                                {
                                         return 'diferenteDe'
@@ -137,7 +140,13 @@ bool    "true"|"false"
                                     }
 ","                                 {
                                         return 'coma'
-                                    }                                    
+                                    }   
+"++"                                {
+                                        return 'incremento'
+                                    }
+"--"                                {
+                                        return 'decremento'
+                                    }                                                                     
 "+"                                 {
                                         return 'SUMA'
                                     }
@@ -154,19 +163,13 @@ bool    "true"|"false"
                                         return 'MODULO'
                                     }                                    
 "**"                                 {
-                                        return 'ELEVADOA'
+                                        return 'POTENCIA'
                                     }
 "{"                                 {
                                         return 'llaveA'
                                     }
 "}"                                 {
                                         return 'llaveC'
-                                    }
-"++"                                {
-                                        return 'incremento'
-                                    }
-"--"                                {
-                                        return 'decremento'
                                     }
 "["                                 {
                                         return 'corcheteA'
@@ -186,6 +189,16 @@ bool    "true"|"false"
                                     }
 /lex
 
+
+%left OR
+%left AND
+%left XOR
+%left SUMA RESTA
+%nonassoc mayorIgual mayorQue menorIgual menorQue igualDoble diferenteDe
+%left MULTIPLICACION DIVISION MODULO
+%left POTENCIA
+%right NOT
+
 %start ini
 
 %%
@@ -199,27 +212,31 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION
 
 INSTRUCCION : DECLARACION ptComa
             | ASIGNACION ptComa
+            | INCREMENTODECREMENTO ptComa
             | SENTENCIAIF
             | SENTENCIASWITCH
+            | SENTENCIAFOR
+            | EXPRESIONARITMETICA
             | BREAK ptComa
 ;
 
 INSTRUCCIONIFSIMPLE : DECLARACION 
                     | ASIGNACION 
+                    | INCREMENTODECREMENTO
 ;
 
 DECLARACION : DECLARACIONNORMAL
             | DECLARACIONCONSTANTE
 ;
 
-DECLARACIONNORMAL: TIPODATO IDS igual IGUALACIONDEDATO  {console.log($1 + " " + $2 + " " + $3 + " " + $4 )}
+DECLARACIONNORMAL: TIPODATO IDS igual EXPRESIONARITMETICA  {console.log($1 + " " + $2 + " " + $3 + " " + $4 )}
 ;
 
 
 DECLARACIONCONSTANTE: CONST DECLARACIONNORMAL 
 ;
 
-ASIGNACION : id igual IGUALACIONDEDATO  {console.log($1 + " " + $2 + " " + $3 )}
+ASIGNACION : id igual EXPRESIONARITMETICA  {console.log($1 + " " + $2 + " " + $3 )}
 ;
 
 IDS: IDS coma id  { $1.push($3);$$=$1;}
@@ -241,15 +258,15 @@ IGUALACIONDEDATO: entero
 ;
 
 
-SENTENCIAIF: IF parentesisA booleano parentesisC VARIOSIF
+SENTENCIAIF: IF parentesisA EXPRESIONLOGICA parentesisC VARIOSIF
 ;
 
-SENTENCIAELSEIF: SENTENCIAELSEIF ELSE IF parentesisA booleano parentesisC llaveA INSTRUCCIONES llaveC
+SENTENCIAELSEIF: SENTENCIAELSEIF ELSE IF parentesisA EXPRESIONLOGICA parentesisC llaveA INSTRUCCIONES llaveC
                 | SENTENCIAELSEIF ELSE llaveA INSTRUCCIONES llaveC
                 |
 ;
 
-SENTENCIAELSEIFSIMPLE: SENTENCIAELSEIFSIMPLE ELSE IF parentesisA booleano parentesisC INSTRUCCIONIFSIMPLE ptComa
+SENTENCIAELSEIFSIMPLE: SENTENCIAELSEIFSIMPLE ELSE IF parentesisA EXPRESIONLOGICA parentesisC INSTRUCCIONIFSIMPLE ptComa
                     | SENTENCIAELSEIFSIMPLE ELSE INSTRUCCIONIFSIMPLE ptComa
                     |
 ;
@@ -269,8 +286,51 @@ CASO: CASE IGUALACIONDEDATO dosPuntos INSTRUCCIONES
     | DEFAULT dosPuntos INSTRUCCIONES
 ;
 
-
+SENTENCIAFOR: FOR parentesisA VARIABLEFOR EXPRESIONESRELACIONALES ptComa INCREMENTODECREMENTOFOR parentesisC llaveA INSTRUCCIONES llaveC
+;
 
 VARIABLEFOR : DECLARACION ptComa
             | ASIGNACION ptComa
+;
+
+EXPRESIONARITMETICA:   EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  
+                    |  EXPRESIONARITMETICA RESTA EXPRESIONARITMETICA   
+                    |  EXPRESIONARITMETICA MULTIPLICACION EXPRESIONARITMETICA  
+                    |  EXPRESIONARITMETICA DIVISION EXPRESIONARITMETICA  
+                    |  EXPRESIONARITMETICA MODULO EXPRESIONARITMETICA
+                    |  EXPRESIONARITMETICA POTENCIA EXPRESIONARITMETICA
+                    |  id     
+                    |  IGUALACIONDEDATO    
+;
+
+EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALES
+                        | EXPRESIONESRELACIONALES mayorIgual EXPRESIONESRELACIONALES
+                        | EXPRESIONESRELACIONALES menorQue EXPRESIONESRELACIONALES
+                        | EXPRESIONESRELACIONALES menorIgual EXPRESIONESRELACIONALES
+                        | EXPRESIONESRELACIONALES igualDoble EXPRESIONESRELACIONALES
+                        | EXPRESIONESRELACIONALES diferenteDe EXPRESIONESRELACIONALES
+                        | EXPRESIONARITMETICA
+;
+
+EXPRESIONLOGICA: EXPRESIONLOGICA OR EXPRESIONLOGICA
+                | EXPRESIONLOGICA AND EXPRESIONLOGICA
+                | EXPRESIONLOGICA XOR EXPRESIONLOGICA
+                | EXPRESIONESRELACIONALES
+;
+
+INCREMENTODECREMENTOFOR: INCREMENTODECREMENTO
+                        | FORINCREMENTODECREMENTO
+;
+
+INCREMENTODECREMENTO: id incremento
+            | id decremento
+;
+
+FORINCREMENTODECREMENTO: id igual SUMARESTA
+;
+
+SUMARESTA: id SUMA SUMARESTA  
+        | id RESTA SUMARESTA 
+        | id     
+        | IGUALACIONDEDATO    
 ;

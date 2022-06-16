@@ -6,24 +6,26 @@ int gol= 1;
 
 if(true){
     int a = 0;
-
+    5+2+3
+    5+3
 }
 
 if(true) x = 0; 
 
 if(false){
     agua = 3;
+    x+y
 }else{
-    agua = 4;
+    agua = 4+4-5;
 }
 
 int hola = 2;
 
 if(true){
     hola = 5;
-}else if(true){
+}else if(x==0){
     hola = 10;
-}else if(true){
+}else if(p<10 && y==4){
     hola = 13;
 }else if(false){
     hola = 3;
@@ -36,4 +38,16 @@ switch(hola){
             x= 1; 
             y = 3;
     default: break;
+}
+
+for(int i= 0; i<10; i++){
+    hola = 0; 
+}
+
+for(int i= 0; i<10; i=i+1){
+    hola = 0; 
+}
+
+for(i= 0; i<10; y=y+1){
+    hola = 0; 
 }
