@@ -6,15 +6,12 @@ int gol= 1;
 
 if(true){
     int a = 0;
-    5+2+3
-    5+3
 }
 
 if(true) x = 0; 
 
 if(false){
     agua = 3;
-    x+y
 }else{
     agua = 4+4-5;
 }
@@ -46,8 +43,54 @@ for(int i= 0; i<10; i++){
 
 for(int i= 0; i<10; i=i+1){
     hola = 0; 
+    continue;
 }
 
 for(i= 0; i<10; y=y+1){
     hola = 0; 
 }
+
+while(hola != 0){
+    if(true){
+        hola = 5;
+    }else if(x==0){
+        hola = 10;
+    }else if(p<10 && y==4){
+        hola = 13;
+    }else if(false){
+        hola = 3;
+        break;
+    }
+}
+
+do{
+    w--;
+}while(hola != 0){
+    hola--;
+}
+
+void hola2(){
+    int a = 0; 
+}
+
+void hi(int a){
+    hola = 2;
+}
+
+int hi(int a){
+    hola = 2;
+    return hola;
+}
+
+boolean hi(int a){
+    hola = metodo();
+    hola = metodo(2, 'a');
+    return;
+}
+
+call metodo();
+call metodo(2, 'a');
+
+print("hola");
+println("como");
+typeof("como");

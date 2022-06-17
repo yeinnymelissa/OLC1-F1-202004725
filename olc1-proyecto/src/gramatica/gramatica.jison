@@ -71,7 +71,37 @@ bool    "true"|"false"
                                     }  
 "for"                               {
                                         return 'FOR';
-                                    }                                                                                                                                                                             
+                                    }  
+"do"                                {
+                                        return 'DO';
+                                    } 
+"while"                             {
+                                        return 'WHILE';
+                                    }   
+"continue"                          {
+                                        return 'CONTINUE';
+                                    }     
+"void"                              {
+                                        return 'VOID';
+                                    } 
+"call"                              {
+                                        return 'CALL';
+                                    } 
+"null"                              {
+                                        return 'null';
+                                    } 
+"return"                            {
+                                        return 'RETORNO';
+                                    }   
+"println"                           {
+                                        return 'PRINTLN';
+                                    } 
+"print"                             {
+                                        return 'PRINT';
+                                    } 
+"typeof"                            {
+                                        return 'TYPEOF';
+                                    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 ([a-zA-Z])[a-zA-Z0-9_]*             {
                                         return 'id';
                                     } 
@@ -216,13 +246,27 @@ INSTRUCCION : DECLARACION ptComa
             | SENTENCIAIF
             | SENTENCIASWITCH
             | SENTENCIAFOR
-            | EXPRESIONARITMETICA
+            | SENTENCIADOWHILE
+            | SENTENCIAWHILE
             | BREAK ptComa
+            | CONTINUE ptComa
+            | INSTRUCCIONLLAMAR ptComa
+            | FUNCION
+            | METODO
+            | FUNCIONPRINTLN ptComa
+            | FUNCIONPRINT ptComa
+            | FUNCIONTYPEOF ptComa
+            | INSTRUCCIONRETURN ptComa
 ;
 
 INSTRUCCIONIFSIMPLE : DECLARACION 
                     | ASIGNACION 
                     | INCREMENTODECREMENTO
+                    | INSTRUCCIONLLAMAR 
+                    | FUNCIONPRINTLN 
+                    | FUNCIONPRINT
+                    | FUNCIONTYPEOF
+                    | INSTRUCCIONRETURN
 ;
 
 DECLARACION : DECLARACIONNORMAL
@@ -255,6 +299,7 @@ IGUALACIONDEDATO: entero
                 | booleano
                 | decimal
                 | caracter
+                | null
 ;
 
 
@@ -293,14 +338,16 @@ VARIABLEFOR : DECLARACION ptComa
             | ASIGNACION ptComa
 ;
 
-EXPRESIONARITMETICA:   EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  
-                    |  EXPRESIONARITMETICA RESTA EXPRESIONARITMETICA   
-                    |  EXPRESIONARITMETICA MULTIPLICACION EXPRESIONARITMETICA  
-                    |  EXPRESIONARITMETICA DIVISION EXPRESIONARITMETICA  
-                    |  EXPRESIONARITMETICA MODULO EXPRESIONARITMETICA
-                    |  EXPRESIONARITMETICA POTENCIA EXPRESIONARITMETICA
-                    |  id     
-                    |  IGUALACIONDEDATO    
+EXPRESIONARITMETICA:  EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  
+                    | EXPRESIONARITMETICA RESTA EXPRESIONARITMETICA   
+                    | EXPRESIONARITMETICA MULTIPLICACION EXPRESIONARITMETICA  
+                    | EXPRESIONARITMETICA DIVISION EXPRESIONARITMETICA  
+                    | EXPRESIONARITMETICA MODULO EXPRESIONARITMETICA
+                    | EXPRESIONARITMETICA POTENCIA EXPRESIONARITMETICA
+                    | id     
+                    | IGUALACIONDEDATO   
+                    | EXPRESIONLLAMAR 
+                    | FUNCIONTYPEOF
 ;
 
 EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALES
@@ -333,4 +380,55 @@ SUMARESTA: id SUMA SUMARESTA
         | id RESTA SUMARESTA 
         | id     
         | IGUALACIONDEDATO    
+;
+
+SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC llaveA INSTRUCCIONES llaveC
+;
+
+SENTENCIADOWHILE: DO llaveA INSTRUCCIONES llaveC SENTENCIAWHILE
+;
+
+METODO: VOID id parentesisA PARAMETROS parentesisC llaveA INSTRUCCIONES llaveC
+;
+
+PARAMETROS: PARAMETROS coma PARAMETRO  
+        | PARAMETRO 
+        |
+;
+
+PARAMETRO: TIPODATO id
+;
+
+FUNCION: TIPODATO id parentesisA PARAMETROS parentesisC llaveA INSTRUCCIONES llaveC
+;
+
+
+
+PARAMETROSCALL: PARAMETROSCALL coma IGUALACIONDEDATO  
+            | IGUALACIONDEDATO 
+            |
+;
+
+INSTRUCCIONLLAMAR: CALL id parentesisA PARAMETROSCALL parentesisC 
+;
+
+EXPRESIONLLAMAR: id parentesisA PARAMETROSCALL parentesisC 
+;
+
+INSTRUCCIONRETURN: RETORNO
+                | RETORNO EXPRESIONARITMETICA
+; 
+
+FUNCIONPRINTLN: PRINTLN parentesisA EXPRESIONARITMETICA parentesisC
+;
+
+FUNCIONPRINT: PRINT parentesisA EXPRESIONARITMETICA parentesisC
+;
+
+FUNCIONTYPEOF: TYPEOF parentesisA TYPEOFEXPRE parentesisC
+;
+
+TYPEOFEXPRE: id     
+            | IGUALACIONDEDATO   
+            | EXPRESIONLLAMAR 
 ;
