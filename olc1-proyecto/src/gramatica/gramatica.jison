@@ -186,15 +186,15 @@ bool    "true"|"false"
                                     }
 "/"                                 {
                                         return 'DIVISION'
+                                    }                                    
+"**"                                {
+                                        return 'POTENCIA'
                                     }
 "*"                                 {
                                         return 'MULTIPLICACION'
                                     }
 "%"                                 {
                                         return 'MODULO'
-                                    }                                    
-"**"                                 {
-                                        return 'POTENCIA'
                                     }
 "{"                                 {
                                         return 'llaveA'

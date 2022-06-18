@@ -100,8 +100,8 @@ export class Arithmetic extends Expresion {
             } // CHAR CON CHAR
             else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.CHAR ) {
                 result = { 
-                    value: (nodoIzq.value + nodoDer.value), 
-                    type: Tipo.CHAR 
+                    value: (nodoIzq.value.charCodeAt(0) + nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
                 }
             }
             else if (nodoDer.type == Tipo.BOOLEAN && nodoIzq.type == Tipo.STRING
@@ -116,15 +116,264 @@ export class Arithmetic extends Expresion {
             
         }else if (this.type == opcionesAritmeticas.MENOS) {
 
-   
+            // INT CON INT
             if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.INT) {
                 result = { 
                     value: (nodoIzq.value - nodoDer.value), 
                     type: Tipo.INT 
                 }
+            } // INT CON DOUBLE O DOUBLE CON INT
+            else if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.DOUBLE
+                ||nodoDer.type == Tipo.DOUBLE && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value - nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON INT
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.INT ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) - nodoDer.value), 
+                    type: Tipo.INT 
+                }
+            } // INT CON CHAR
+            else if (nodoIzq.type == Tipo.INT && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value - nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
+                }
+            } // DOUBLE CON DOUBLE
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value - nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON CHAR
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value - nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON DOUBLE
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) - nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON CHAR
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) - nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
+                }
             }
             //en la resta unicamente quiero con numeros
             
+        }else if (this.type == opcionesAritmeticas.MULTIPLICACION){
+
+            //INT CON INT
+            if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value * nodoDer.value), 
+                    type: Tipo.INT 
+                }
+            } // INT CON DOUBLE O DOUBLE CON INT
+            else if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.DOUBLE
+                ||nodoDer.type == Tipo.DOUBLE && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value * nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON INT
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.INT ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) * nodoDer.value), 
+                    type: Tipo.INT 
+                }
+            } // INT CON CHAR
+            else if (nodoIzq.type == Tipo.INT && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value * nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
+                }
+            } // DOUBLE CON DOUBLE
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value * nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON CHAR
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value * nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON DOUBLE
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) * nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON CHAR
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) * nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
+                }
+            }
+        }else if (this.type == opcionesAritmeticas.DIVISION){
+
+            //INT CON INT
+            if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value / nodoDer.value), 
+                    type: Tipo.INT 
+                }
+            } // INT CON DOUBLE O DOUBLE CON INT
+            else if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.DOUBLE
+                ||nodoDer.type == Tipo.DOUBLE && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value / nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON INT
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.INT ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) / nodoDer.value), 
+                    type: Tipo.INT 
+                }
+            } // INT CON CHAR
+            else if (nodoIzq.type == Tipo.INT && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value / nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
+                }
+            } // DOUBLE CON DOUBLE
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value / nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON CHAR
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value / nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON DOUBLE
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) / nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON CHAR
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) / nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.INT 
+                }
+            }
+        }else if (this.type == opcionesAritmeticas.POTENCIA){
+            //INT CON INT
+            if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value,nodoDer.value)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // INT CON DOUBLE O DOUBLE CON INT
+            else if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.DOUBLE
+                ||nodoDer.type == Tipo.DOUBLE && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value,nodoDer.value)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON INT
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.INT ) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value.charCodeAt(0),nodoDer.value)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // INT CON CHAR
+            else if (nodoIzq.type == Tipo.INT && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value,nodoDer.value.charCodeAt(0))), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON DOUBLE
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value,nodoDer.value)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON CHAR
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value,nodoDer.value.charCodeAt(0))), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON DOUBLE
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value.charCodeAt(0),nodoDer.value)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON CHAR
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (Math.pow(nodoIzq.value.charCodeAt(0),nodoDer.value.charCodeAt(0))), 
+                    type: Tipo.DOUBLE 
+                }
+            }
+        }else if (this.type == opcionesAritmeticas.MODULO){
+            //INT CON INT
+            if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value % nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // INT CON DOUBLE O DOUBLE CON INT
+            else if (nodoDer.type == Tipo.INT && nodoIzq.type == Tipo.DOUBLE
+                ||nodoDer.type == Tipo.DOUBLE && nodoIzq.type == Tipo.INT) {
+                result = { 
+                    value: (nodoIzq.value % nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON INT
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.INT ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) % nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // INT CON CHAR
+            else if (nodoIzq.type == Tipo.INT && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value % nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON DOUBLE
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value % nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // DOUBLE CON CHAR
+            else if (nodoIzq.type == Tipo.DOUBLE && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value % nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON DOUBLE
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.DOUBLE ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) % nodoDer.value), 
+                    type: Tipo.DOUBLE 
+                }
+            } // CHAR CON CHAR
+            else if (nodoIzq.type == Tipo.CHAR && nodoDer.type == Tipo.CHAR ) {
+                result = { 
+                    value: (nodoIzq.value.charCodeAt(0) % nodoDer.value.charCodeAt(0)), 
+                    type: Tipo.DOUBLE 
+                }
+            }
         }
 
 
