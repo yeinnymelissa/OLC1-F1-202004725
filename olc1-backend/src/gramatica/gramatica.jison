@@ -15,6 +15,9 @@
     const {Bloque} = require('../instrucciones/bloque');
     const {While} = require('../instrucciones/while');
     const {DoWhile} = require('../instrucciones/dowhile');
+    const {Errores} = require('../errores/errores');
+    var errores = [];
+    module.exports.errores = errores;
 %}
 
 /*Definicion léxica*/
@@ -217,7 +220,8 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 \n                                  {}
 <<EOF>>                             return 'EOF';
 .                                   {
-                                        //let error = new Errores(yylloc.first_line,  yylloc.first_column, "La expresión " + yytext + " no pertenece al lenguaje", "Léxico")
+                                        let error = new Errores(yylloc.first_line,  yylloc.first_column, "La expresión " + yytext + " no pertenece al lenguaje", "Léxico")
+                                        errores.push(error);
                                         console.log("ERROR LEXICO EN LA LINEA "+ yylloc.first_line + "Y EN LA COLUMNA "+yylloc.first_column + " EL TEXTO ES "+ yytext);
                                     }
 /lex
@@ -264,6 +268,8 @@ INSTRUCCION : DECLARACION ptComa { $$=$1; }
             | error    ';'  { 
                 //get instance
                 //meterlo
+                let error = new Errores(yylloc.first_line,  yylloc.first_column, "La expresión " + yytext + " no pertenece al lenguaje", "Sintáctico")
+                errores.push(error);
                 console.log("Error sintactico en la linea"+(yylineno+1)); }
 ;
 
@@ -394,10 +400,10 @@ SUMARESTA: id SUMA SUMARESTA  {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MAS
         | IGUALACIONDEDATO {$$=$1;}
 ;
 
-SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE {$$= new While($3,$5,@1.first_line, @1.first_column)}
+SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE 
 ;
 
-SENTENCIADOWHILE: DO BLOQUE WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE {$$= new DoWhile($5,$2,$7,@1.first_line, @1.first_column)}
+SENTENCIADOWHILE: DO BLOQUE WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE 
 ;
 
 METODO: VOID id parentesisA PARAMETROS parentesisC BLOQUE

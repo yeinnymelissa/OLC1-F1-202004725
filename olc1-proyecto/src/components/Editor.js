@@ -207,7 +207,7 @@ function Editor(){
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
                         <li><button className="dropdown-item" type="button">Reporte AST</button></li>
-                        <li><button className="dropdown-item" type="button" onClick={reporteErrores}>Reporte de errores</button></li>
+                        <li><button className="dropdown-item" type="button" >Reporte de errores</button></li>
                         <li><button className="dropdown-item" type="button">Reporte TS</button></li>
                     </ul>
                 </div>       
