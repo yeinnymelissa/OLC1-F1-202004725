@@ -1,8 +1,6 @@
 import * as React from 'react';
-import CodeMirror from '@uiw/react-codemirror';
 import FileSaver from "file-saver";
-import { useState } from 'react';
-import Tab from './Tab';
+import axios from 'axios';
 
 function Editor(){
 
@@ -149,16 +147,45 @@ function Editor(){
             if(li_[i].classList.contains("active")){
                 const text = document.querySelector('#code'+i)
                 const body = {datos: text.value}
-                fetch('http://localhost:4000/run', {
-                    mode: 'no-cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }, method: "POST", 
-                    body
-                }).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error))
+                const consola = document.querySelector('#console');
+
+                axios
+                    .post('http://localhost:4000/run', body)
+
+                    .then(({ data }) => {
+                        consola.innerHTML = '';
+                        if (data.err) {
+                            return;
+                        }
+
+                        consola.innerHTML = data;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             }
         })
+    }
+
+    function reporteErrores(){
+        const body = {datos: ""}
+        const consola = document.querySelector('#console');
+        axios
+            .get('http://localhost:4000/errores')
+            .then(({ data }) => {
+                //si sale bien ejecuta esto
+                console.log(data)
+                consola.innerHTML = '';
+                if (data.err) {
+                    return;
+                }
+
+                consola.innerHTML = data;
+            })
+            .catch((err) => {
+                //si sale mal ejecuta esto
+                console.log(err);
+            });
     }
     
     return (
@@ -180,7 +207,7 @@ function Editor(){
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
                         <li><button className="dropdown-item" type="button">Reporte AST</button></li>
-                        <li><button className="dropdown-item" type="button">Reporte de errores</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={reporteErrores}>Reporte de errores</button></li>
                         <li><button className="dropdown-item" type="button">Reporte TS</button></li>
                     </ul>
                 </div>       
