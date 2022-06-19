@@ -25,6 +25,9 @@ export class Singleton {
     public get_consola(): string {
         return this.consola
     }
+    public set_consola(data: string) {
+        this.consola = data
+    }
 
 
     public add_errores(data: any) {

@@ -9,7 +9,12 @@
     const {Relacional} = require('../expresiones/relacional');
     const {opcionesRelacionales} = require('../expresiones/opcionesRelacionales');
     const {Acceso} = require('../expresiones/acceso');
-    
+    const {Asignar} = require('../instrucciones/asignar');
+    const {Print} = require('../instrucciones/print');
+    const {Println} = require('../instrucciones/println');
+    const {Bloque} = require('../instrucciones/bloque');
+    const {While} = require('../instrucciones/while');
+    const {DoWhile} = require('../instrucciones/dowhile');
 %}
 
 /*Definicion léxica*/
@@ -37,10 +42,10 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 {caracterS}                         {
                                         return 'caracter';
                                     }
-[0-9]+("."[0-9]+)?\b          {
+[0-9]+("."[0-9]+)?\b                {
                                         return 'decimal';
                                     }  
-[0-9]+\b                      {
+[0-9]+\b                            {
                                         return 'entero';
                                     } 
 {bool}                              {
@@ -231,77 +236,73 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 
 %%
 
-ini : INSTRUCCIONES EOF {console.log("termine el análisis");} 
+ini : INSTRUCCIONES EOF {return $1}  
 ;
 
-INSTRUCCIONES : INSTRUCCIONES INSTRUCCION
-                | INSTRUCCION
+INSTRUCCIONES : INSTRUCCIONES INSTRUCCION { $1.push($2); $$=$1;}
+                | INSTRUCCION { $$ = [$1] }
 ;
 
-INSTRUCCION : DECLARACION ptComa
+INSTRUCCION : DECLARACION ptComa { $$=$1; } 
             | ASIGNACION ptComa
-            | INCREMENTODECREMENTO ptComa
-            | SENTENCIAIF
-            | SENTENCIASWITCH
-            | SENTENCIAFOR
-            | SENTENCIADOWHILE
-            | SENTENCIAWHILE
-            | BREAK ptComa
-            | CONTINUE ptComa
-            | INSTRUCCIONLLAMAR ptComa
-            | FUNCION
-            | METODO
-            | FUNCIONPRINTLN ptComa
-            | FUNCIONPRINT ptComa
-            | FUNCIONTYPEOF ptComa
-            | INSTRUCCIONRETURN ptComa
-            | BLOQUE
+            | INCREMENTODECREMENTO ptComa { $$=$1; } 
+            | SENTENCIAIF { $$=$1; } 
+            | SENTENCIASWITCH { $$=$1; } 
+            | SENTENCIAFOR { $$=$1; } 
+            | SENTENCIADOWHILE { $$=$1; } 
+            | SENTENCIAWHILE { $$=$1; } 
+            | BREAK ptComa { $$=$1; } 
+            | CONTINUE ptComa { $$=$1; } 
+            | INSTRUCCIONLLAMAR ptComa { $$=$1; } 
+            | FUNCION { $$=$1; } 
+            | METODO { $$=$1; } 
+            | FUNCIONPRINTLN ptComa { $$=$1; } 
+            | FUNCIONPRINT ptComa { $$=$1; } 
+            | FUNCIONTYPEOF ptComa { $$=$1; } 
+            | INSTRUCCIONRETURN ptComa { $$=$1; } 
+            | BLOQUE { $$=$1; } 
             | error    ';'  { 
                 //get instance
                 //meterlo
                 console.log("Error sintactico en la linea"+(yylineno+1)); }
 ;
 
-INSTRUCCIONIFSIMPLE : DECLARACION 
-                    | ASIGNACION 
-                    | INCREMENTODECREMENTO
-                    | INSTRUCCIONLLAMAR 
-                    | FUNCIONPRINTLN 
-                    | FUNCIONPRINT
-                    | FUNCIONTYPEOF
-                    | INSTRUCCIONRETURN
-                    | BREAK
+INSTRUCCIONIFSIMPLE : DECLARACION { $$=$1; } 
+                    | ASIGNACION { $$=$1; } 
+                    | INCREMENTODECREMENTO { $$=$1; } 
+                    | INSTRUCCIONLLAMAR { $$=$1; } 
+                    | FUNCIONPRINTLN { $$=$1; } 
+                    | FUNCIONPRINT { $$=$1; } 
+                    | FUNCIONTYPEOF { $$=$1; } 
+                    | INSTRUCCIONRETURN { $$=$1; } 
+                    | BREAK { $$=$1; } 
 ;
 
-DECLARACION : DECLARACIONNORMAL
-            | DECLARACIONCONSTANTE
+DECLARACION : DECLARACIONNORMAL { $$=$1; } 
+            | DECLARACIONCONSTANTE { $$=$1; } 
 ;
 
-DECLARACIONNORMAL: TIPODATO IDS igual EXPRESIONARITMETICA  {$$= new Declaracion($2,$1,$4,true,@1.first_line, @1.first_column );}
+DECLARACIONNORMAL: TIPODATO id igual EXPRESIONARITMETICA  {$$= new Declaracion($2,$1,$4,true,@1.first_line, @1.first_column );}
 ;
 
 
-DECLARACIONCONSTANTE: CONST TIPODATO IDS igual EXPRESIONARITMETICA {$$= new Declaracion($3,$2,$5,false,@1.first_line, @1.first_column );}
+DECLARACIONCONSTANTE: CONST TIPODATO id igual EXPRESIONARITMETICA {$$= new Declaracion($3,$2,$5,false,@1.first_line, @1.first_column );}
 ;
 
-ASIGNACION : id igual EXPRESIONARITMETICA  {console.log($1 + " " + $2 + " " + $3 )}
+ASIGNACION : id igual EXPRESIONARITMETICA  {$$= new Asignar($1,$3,@1.first_line, @1.first_column );}
 ;
 
-IDS: IDS coma id  { $1.push($3); $$=$1;}
-    | id {$$=$1;} 
+TIPODATO: INT {$$=$1;} 
+        | STRING {$$=$1;} 
+        | BOOLEAN {$$=$1;} 
+        | DOUBLE {$$=$1;} 
+        | CHAR {$$=$1;} 
 ;
 
-TIPODATO: INT {$$="int";} 
-        | STRING {$$="string";} 
-        | BOOLEAN {$$="boolean";} 
-        | DOUBLE {$$="double";} 
-        | CHAR {$$="char";} 
-;
-
-IGUALACIONDEDATO: entero {$$=new Literal($1,Tipo.INT , @1.first_line, @1.first_column)}
+IGUALACIONDEDATO: decimal {$$=new Literal($1,Tipo.DOUBLE , @1.first_line, @1.first_column)}
                 | cadena {$$=new Literal($1,Tipo.STRING , @1.first_line, @1.first_column)}
                 | booleano {$$=new Literal($1,Tipo.BOOLEAN , @1.first_line, @1.first_column)}
-                | decimal {$$=new Literal($1,Tipo.DOUBLE , @1.first_line, @1.first_column)}
+                | entero {$$=new Literal($1,Tipo.INT , @1.first_line, @1.first_column)}
                 | caracter {$$=new Literal($1,Tipo.CHAR , @1.first_line, @1.first_column)}
                 | RESTA entero {$$=new Literal($1+$2,Tipo.INT , @1.first_line, @1.first_column)}
                 | RESTA decimal {$$=new Literal($1+$2,Tipo.DOUBLE , @1.first_line, @1.first_column)}
@@ -340,8 +341,8 @@ CASO: CASE IGUALACIONDEDATO dosPuntos INSTRUCCIONES
 SENTENCIAFOR: FOR parentesisA VARIABLEFOR EXPRESIONESRELACIONALES ptComa INCREMENTODECREMENTOFOR parentesisC BLOQUE
 ;
 
-VARIABLEFOR : DECLARACION ptComa
-            | ASIGNACION ptComa
+VARIABLEFOR : DECLARACION ptComa {$$=$1;} 
+            | ASIGNACION ptComa {$$=$1;} 
 ;
 
 EXPRESIONARITMETICA:  EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MAS, @1.first_line, @1.first_column);}
@@ -358,23 +359,23 @@ EXPRESIONARITMETICA:  EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  {$$= new Ari
                     | INCREMENTODECREMENTO {$$=$1;}
 ;
 
-EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALES
-                        | EXPRESIONESRELACIONALES mayorIgual EXPRESIONESRELACIONALES
-                        | EXPRESIONESRELACIONALES menorQue EXPRESIONESRELACIONALES
-                        | EXPRESIONESRELACIONALES menorIgual EXPRESIONESRELACIONALES
-                        | EXPRESIONESRELACIONALES igualDoble EXPRESIONESRELACIONALES
-                        | EXPRESIONESRELACIONALES diferenteDe EXPRESIONESRELACIONALES
-                        | EXPRESIONARITMETICA
+EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.MAYOR, @1.first_line, @1.first_column);}
+                        | EXPRESIONESRELACIONALES mayorIgual EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.MAYORIGUAL, @1.first_line, @1.first_column);}
+                        | EXPRESIONESRELACIONALES menorQue EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.MENOR, @1.first_line, @1.first_column);}
+                        | EXPRESIONESRELACIONALES menorIgual EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.MENORIGUAL, @1.first_line, @1.first_column);}
+                        | EXPRESIONESRELACIONALES igualDoble EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.IGUAL, @1.first_line, @1.first_column);}
+                        | EXPRESIONESRELACIONALES diferenteDe EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.DIFERENTEDE, @1.first_line, @1.first_column);}
+                        | EXPRESIONARITMETICA {$$=$1;}
 ;
 
-EXPRESIONLOGICA: EXPRESIONLOGICA OR EXPRESIONLOGICA
-                | EXPRESIONLOGICA AND EXPRESIONLOGICA
-                | EXPRESIONLOGICA XOR EXPRESIONLOGICA
-                | NOT EXPRESIONLOGICA 
-                | EXPRESIONESRELACIONALES
+EXPRESIONLOGICA: EXPRESIONLOGICA OR EXPRESIONLOGICA {$$= new Logicas($1,$3,opcionesLogicas.OR, @1.first_line, @1.first_column);}
+                | EXPRESIONLOGICA AND EXPRESIONLOGICA {$$= new Logicas($1,$3,opcionesLogicas.AND, @1.first_line, @1.first_column);}
+                | EXPRESIONLOGICA XOR EXPRESIONLOGICA {$$= new Logicas($1,$3,opcionesLogicas.XOR, @1.first_line, @1.first_column);}
+                | NOT EXPRESIONLOGICA {$$= new Logicas($2,null,opcionesLogicas.NOT, @1.first_line, @1.first_column);}
+                | EXPRESIONESRELACIONALES {$$=$1;}
 ;
 
-INCREMENTODECREMENTOFOR: INCREMENTODECREMENTO
+INCREMENTODECREMENTOFOR: INCREMENTODECREMENTO 
                         | FORINCREMENTODECREMENTO
 ;
 
@@ -387,16 +388,16 @@ INCREMENTODECREMENTO: id incremento
 FORINCREMENTODECREMENTO: id igual SUMARESTA
 ;
 
-SUMARESTA: id SUMA SUMARESTA  
-        | id RESTA SUMARESTA 
-        | id     
-        | IGUALACIONDEDATO    
+SUMARESTA: id SUMA SUMARESTA  {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MAS, @1.first_line, @1.first_column);}
+        | id RESTA SUMARESTA {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MENOS, @1.first_line, @1.first_column);}
+        | id {$$=$1;}     
+        | IGUALACIONDEDATO {$$=$1;}
 ;
 
-SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE
+SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE {$$= new While($3,$5,@1.first_line, @1.first_column)}
 ;
 
-SENTENCIADOWHILE: DO BLOQUE SENTENCIAWHILE
+SENTENCIADOWHILE: DO BLOQUE WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE {$$= new DoWhile($5,$2,$7,@1.first_line, @1.first_column)}
 ;
 
 METODO: VOID id parentesisA PARAMETROS parentesisC BLOQUE
@@ -430,15 +431,15 @@ INSTRUCCIONRETURN: RETORNO
                 | RETORNO EXPRESIONARITMETICA
 ; 
 
-FUNCIONPRINTLN: PRINTLN parentesisA EXPRESIONARITMETICA parentesisC
+FUNCIONPRINTLN: PRINTLN parentesisA EXPRESIONARITMETICA parentesisC {$$= new Println($3, @1.first_line, @1.first_column);}
 ;
 
-FUNCIONPRINT: PRINT parentesisA EXPRESIONARITMETICA parentesisC
+FUNCIONPRINT: PRINT parentesisA EXPRESIONARITMETICA parentesisC {$$= new Print($3, @1.first_line, @1.first_column);}
 ;
 
 FUNCIONTYPEOF: TYPEOF parentesisA EXPRESIONARITMETICA parentesisC
 ;
 
-BLOQUE: llaveA INSTRUCCIONES llaveC
+BLOQUE: llaveA INSTRUCCIONES llaveC  {$$= new Bloque($2,@1.first_line, @1.first_column)}
         | llaveA llaveC
 ;

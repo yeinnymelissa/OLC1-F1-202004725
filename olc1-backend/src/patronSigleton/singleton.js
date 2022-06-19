@@ -18,6 +18,9 @@ var Singleton = /** @class */ (function () {
     Singleton.prototype.get_consola = function () {
         return this.consola;
     };
+    Singleton.prototype.set_consola = function (data) {
+        this.consola = data;
+    };
     Singleton.prototype.add_errores = function (data) {
         this.errores.push(data);
     };

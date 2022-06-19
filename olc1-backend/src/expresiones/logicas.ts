@@ -4,7 +4,7 @@ import { Entorno } from "../simbolos/entorno";
 import { Tipo } from "../simbolos/tipo";
 import { opcionesLogicas } from "./opcionesLogicas";
 
-export class Relacional extends Expresion {
+export class Logicas extends Expresion {
     constructor(
       private left: Expresion,
       private right: Expresion,

@@ -15,20 +15,20 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.Arithmetic = void 0;
+exports.Aritmeticas = void 0;
 var expresion_1 = require("../abstract/expresion");
 var tipo_1 = require("../simbolos/tipo");
 var opcionesAritmeticas_1 = require("./opcionesAritmeticas");
-var Arithmetic = /** @class */ (function (_super) {
-    __extends(Arithmetic, _super);
-    function Arithmetic(left, right, type, line, column) {
+var Aritmeticas = /** @class */ (function (_super) {
+    __extends(Aritmeticas, _super);
+    function Aritmeticas(left, right, type, line, column) {
         var _this = _super.call(this, line, column) || this;
         _this.left = left;
         _this.right = right;
         _this.type = type;
         return _this;
     }
-    Arithmetic.prototype.run = function (env) {
+    Aritmeticas.prototype.run = function (env) {
         var result = {
             value: null,
             type: tipo_1.Tipo.error
@@ -385,6 +385,6 @@ var Arithmetic = /** @class */ (function (_super) {
         }
         return result;
     };
-    return Arithmetic;
+    return Aritmeticas;
 }(expresion_1.Expresion));
-exports.Arithmetic = Arithmetic;
+exports.Aritmeticas = Aritmeticas;

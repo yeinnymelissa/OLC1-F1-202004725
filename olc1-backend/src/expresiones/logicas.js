@@ -15,20 +15,20 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.Relacional = void 0;
+exports.Logicas = void 0;
 var expresion_1 = require("../abstract/expresion");
 var tipo_1 = require("../simbolos/tipo");
 var opcionesLogicas_1 = require("./opcionesLogicas");
-var Relacional = /** @class */ (function (_super) {
-    __extends(Relacional, _super);
-    function Relacional(left, right, type, line, column) {
+var Logicas = /** @class */ (function (_super) {
+    __extends(Logicas, _super);
+    function Logicas(left, right, type, line, column) {
         var _this = _super.call(this, line, column) || this;
         _this.left = left;
         _this.right = right;
         _this.type = type;
         return _this;
     }
-    Relacional.prototype.run = function (env) {
+    Logicas.prototype.run = function (env) {
         var result = {
             value: null,
             type: tipo_1.Tipo.error
@@ -129,6 +129,6 @@ var Relacional = /** @class */ (function (_super) {
         }
         return result;
     };
-    return Relacional;
+    return Logicas;
 }(expresion_1.Expresion));
-exports.Relacional = Relacional;
+exports.Logicas = Logicas;

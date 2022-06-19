@@ -3,7 +3,7 @@ import { Instruccion } from "../abstract/instruccion";
 import { Singleton } from "../patronSigleton/singleton";
 import { Entorno } from "../simbolos/entorno";
 
-export class Print extends Instruccion {
+export class Println extends Instruccion {
     constructor(        
         public expresion : Expresion,
         line: number, 
@@ -18,8 +18,9 @@ export class Print extends Instruccion {
         //console.log("---------------");
         
         const tmp= this.expresion.run(env);
-        // console.log(tmp);
-        // console.log(tmp.type); 
+        console.log("prueba")
+        console.log(tmp);
+        console.log(tmp.type); 
         //console.log(">>",tmp.value); //esto es lo que tienen que mostrar al usuario
         
         const s= Singleton.getInstance()

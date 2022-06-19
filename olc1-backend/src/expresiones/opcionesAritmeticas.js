@@ -9,5 +9,4 @@ var opcionesAritmeticas;
     /*3*/ opcionesAritmeticas[opcionesAritmeticas["DIVISION"] = 3] = "DIVISION";
     /*4*/ opcionesAritmeticas[opcionesAritmeticas["MODULO"] = 4] = "MODULO";
     /*5*/ opcionesAritmeticas[opcionesAritmeticas["POTENCIA"] = 5] = "POTENCIA";
-    /*6*/ opcionesAritmeticas[opcionesAritmeticas["NEGACION"] = 6] = "NEGACION";
 })(opcionesAritmeticas = exports.opcionesAritmeticas || (exports.opcionesAritmeticas = {}));

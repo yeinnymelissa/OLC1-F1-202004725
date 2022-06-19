@@ -1,0 +1,45 @@
+//A continuacion un archivo de entrada para el curso de "olc1"
+//Este es un comentario de una linea :)
+//INICIANDO--------------------------------------------
+/*******        
+    ****Universidad San Carlos de Guatemala
+        Facultad de Ingenieria /n
+        Escuela de vacasiones Junio 2022
+        LFScript
+****/
+println("SENTENCIA DECLARACION :--------------------------");
+double calificacion=0.0;
+
+//AREA DE DECLARACIONES DE VARIABLES GLOBALES
+int numero = 12;
+int a = 2022;
+int b = 2022;
+int c = 2022;
+int d = 2022;
+int numero_tres_ = numero;
+
+string encabezado = "\"Universidad San Carlos de Guatemala\"\nEscuela de Ciencias y Sistmas";
+string copia_encabezado = encabezado;
+string nombre = "compiladores";
+string nombre_dos = "organizacion";
+string nombre_tres = "-45";
+string nombre_cuatro = "%%%#\n\""; 
+string nombre_cinco = ""; 
+
+println(encabezado);
+
+doublE decimal_uno = -0.235;
+double e = 20.22+12;
+double f = 20.22+12;
+double g = 20.22+12;
+double h = 20.22+12;
+double i = 20.22+12;
+double ee = 20.22+12+e;
+double ff = 20.22+12+e;
+double gg = 20.22+12+e;
+double hh = 20.22+12+e;
+double ii = 20.22+12+e;
+double jj= 100.01; 
+
+
+

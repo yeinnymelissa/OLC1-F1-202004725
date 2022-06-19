@@ -134,7 +134,7 @@ function Editor(){
                 let blob = new Blob([text.value], {
                     type: "text/plain;charset=utf-8"
                 });
-                FileSaver.saveAs(blob, "archivoLFScript.lf");
+                FileSaver.saveAs(blob, "archivoLFScript.LF");
             }
         })
         
@@ -191,7 +191,7 @@ function Editor(){
     return (
         <div className='todo'>
             <div className="botones">
-                <input type="file" accept='.lf' id="abrir" className="btn btn-primary izq" onChange={leerArchivo}/>
+                <input type="file" accept='.LF' id="abrir" className="btn btn-primary izq" onChange={leerArchivo}/>
                 <div className="dropdown izq">
                     <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
                         Guardar

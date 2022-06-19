@@ -12,12 +12,23 @@ double calificacion=0.0;
 
 //AREA DE DECLARACIONES DE VARIABLES GLOBALES
 int numero = 12;
-int a,b,c,d = 2022;
+int a = 2022;
+int b = 2022;
+int c = 2022;
+int d = 2022;
 int numero_tres_ = numero;
 
 doublE decimal_uno = -0.235;
-double e,f,g,h,i= 20.22+12;
-double ee,ff,gg,hh,ii= 20.22+12+e;
+double e = 20.22+12;
+double f = 20.22+12;
+double g = 20.22+12;
+double h = 20.22+12;
+double i = 20.22+12;
+double ee = 20.22+12+e;
+double ff = 20.22+12+e;
+double gg = 20.22+12+e;
+double hh = 20.22+12+e;
+double ii = 20.22+12+e;
 double jj= 100.01; 
 
 char caracter_uno = 'A' ;
@@ -26,7 +37,9 @@ char caracter_uno_dos = 'a' ;
 char caracter_especial_uno = '\n' ;
 char caracter_especial_dos = '\\' ;
 char caracter_especial_tres = '\t' ;
-char caracter_a, caracter_b, caracter__c = '8';
+char caracter_a = '8';
+char caracter_b = '8';
+char caracter__c = '8';
 
 boolean banderita_uno = true;
 booleaN banderita_dos = false;
