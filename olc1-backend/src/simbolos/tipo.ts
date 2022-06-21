@@ -5,5 +5,7 @@ export enum Tipo{
     CHAR,
     DOUBLE,
     NULL,
+    VOID, 
+    VECTOR,
     error
 }

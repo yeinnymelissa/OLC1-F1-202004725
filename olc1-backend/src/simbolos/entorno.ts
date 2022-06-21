@@ -1,3 +1,4 @@
+import { Singleton } from "../patronSigleton/singleton";
 import { Simbolo } from "./simbolo";
 import { Tipo } from "./tipo";
 
@@ -7,7 +8,7 @@ export class Entorno {
   private tablaSimbolos_metodos: Map<string, any>; //unicamente para metodos o funciones
 
 
-  constructor(public anterior: Entorno | null) {
+  constructor(public anterior: Entorno | null, public recorridoAmbito: string) {
     this.tablaSimbolos = new Map();
     this.tablaSimbolos_metodos = new Map();
   }
@@ -22,10 +23,13 @@ export class Entorno {
     this.tablaSimbolos_metodos.set(nombre, valor);
   }
 
-  public guardar_variable(nombre: string, valor: any, tipo: Tipo): boolean {
+  public guardar_variable(nombre: string, valor: any, tipo: Tipo, editable: boolean, ambito: string, line: number, column: number): boolean {
     
     if(!this.buscar_variable(nombre)){
-      this.tablaSimbolos.set(nombre, new Simbolo(valor, nombre, tipo,true));
+      let simbol:Simbolo = new Simbolo(valor, nombre, tipo,editable, ambito, line, column);
+      this.tablaSimbolos.set(nombre, simbol);
+      let singleton = Singleton.getInstance();
+      singleton.add_simbolos(simbol)
       return true
     }
     console.log("esta variable ["+nombre+"] ya existe...");
@@ -40,20 +44,24 @@ export class Entorno {
   }
   public getTipo_variable(nombre: string): Tipo {
     for (let entry of Array.from(this.tablaSimbolos.entries())) {
-        if (entry[0] == nombre) return entry[1].type;
+        if (entry[0] == nombre) return entry[1].tipo;
     }
     return Tipo.error
   }
   public actualizar_variable(nombre: string, new_valor: any) {
-    for (let entry of Array.from(this.tablaSimbolos.entries())) {
-      if (entry[0] == nombre) {
-          if(entry[1].value.editable == true){
-            entry[1].value = new_valor;
-          }else{
-            //error semantico
+    let env: Entorno | null = this;
+
+      while (env != null) {
+          if (env.tablaSimbolos.has(nombre)) {
+              for (let entry of Array.from(env.tablaSimbolos.entries())) {
+                  if (entry[0] == nombre) {
+                      entry[1].valor = new_valor;
+                      return
+                  }
+              }
           }
+          env = env.anterior;
       }
-  }
   }
 
 
@@ -64,6 +72,27 @@ export class Entorno {
         env = env.anterior;
     }
     return null;
+}
+
+public getTipo(tipo: Tipo): string{
+  switch(tipo){
+      case Tipo.INT:
+          return "int";
+      case Tipo.DOUBLE:
+          return "double";
+      case Tipo.CHAR:
+          return "char";
+      case Tipo.STRING:
+          return "string";
+      case Tipo.BOOLEAN:
+          return "boolean";
+      case Tipo.VOID:
+          return "void";
+      case Tipo.VECTOR:
+          return "vector";
+      default:
+          return "error";
+  }
 }
 
   /*public get_metodo(nombre: string): metodo | undefined | null {

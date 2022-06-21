@@ -10,4 +10,5 @@ export abstract class Instruccion {
     }
 
     public abstract run(env:Entorno): any
+    public abstract ast(): void
 }

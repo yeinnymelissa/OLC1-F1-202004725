@@ -9,5 +9,5 @@ export abstract class Expresion {
     }
 
     public abstract run(env:Entorno): Retorno
-    //public abstract graficarAST(): any
+    public abstract ast(): string
 }

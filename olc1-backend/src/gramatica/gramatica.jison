@@ -18,12 +18,15 @@
     const {Errores} = require('../errores/errores');
     var errores = [];
     module.exports.errores = errores;
+
+    var cadena = '';
 %}
 
 /*Definicion léxica*/
 %lex
 
 %options case-insensitive
+%x string
 
 
 bool    "true"|"false"   
@@ -32,188 +35,90 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 
 %%
 
+["]				        { cadena = ''; this.begin("string"); }
+<string>[^"\\]+			{ cadena += yytext; }
+<string>"\\\""			{ cadena += "\""; }
+<string>"\n"			{ cadena += "\n"; }
+<string>\s			    { cadena += " ";  }
+<string>"\t"			{ cadena += "\t"; }
+<string>"\\\\"			{ cadena += "\\"; }
+<string>"\'"			{ cadena += "\'"; }
+<string>"\r"			{ cadena += "\r"; }
+<string>["]		        { yytext = cadena; this.popState(); return 'cadena'; }
+
 \s+                                 {}
-"//".*                              {
-                                        console.log("Comentario una línea");
-                                    }
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {
-                                        console.log("Comentario multi");
-                                    }
-{cadenaS}                           {
-                                        return 'cadena';
-                                    }
-{caracterS}                         {
-                                        return 'caracter';
-                                    }
-[0-9]+("."[0-9]+)?\b                {
-                                        return 'decimal';
-                                    }  
-[0-9]+\b                            {
-                                        return 'entero';
-                                    } 
-{bool}                              {
-                                        return 'booleano';
-                                    } 
-"int"                               {
-                                        return 'INT';
-                                    }
-"string"                            {
-                                        return 'STRING';
-                                    }
-"boolean"                           {
-                                        return 'BOOLEAN';
-                                    }
-"double"                            {
-                                        return 'DOUBLE';
-                                    }
-"char"                              {
-                                        return 'CHAR';
-                                    }
-"const"                             {
-                                        return 'CONST';
-                                    }   
-"if"                                {
-                                        return 'IF';
-                                    }   
-"else"                              {
-                                        return 'ELSE';
-                                    }  
-"switch"                            {
-                                        return 'SWITCH';
-                                    }   
-"case"                              {
-                                        return 'CASE';
-                                    } 
-"default"                           {
-                                        return 'DEFAULT';
-                                    }   
-"break"                             {
-                                        return 'BREAK';
-                                    }  
-"for"                               {
-                                        return 'FOR';
-                                    }  
-"do"                                {
-                                        return 'DO';
-                                    } 
-"while"                             {
-                                        return 'WHILE';
-                                    }   
-"continue"                          {
-                                        return 'CONTINUE';
-                                    }     
-"void"                              {
-                                        return 'VOID';
-                                    } 
-"call"                              {
-                                        return 'CALL';
-                                    } 
-"null"                              {
-                                        return 'null';
-                                    } 
-"return"                            {
-                                        return 'RETORNO';
-                                    }   
-"println"                           {
-                                        return 'PRINTLN';
-                                    } 
-"print"                             {
-                                        return 'PRINT';
-                                    } 
-"typeof"                            {
-                                        return 'TYPEOF';
-                                    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-([a-zA-Z])[a-zA-Z0-9_]*             {
-                                        return 'id';
-                                    } 
+"//".*                              {console.log("Comentario una línea");}
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {console.log("Comentario multi");}
+[']\\\\[']|[']\\\"[']|[']\\\'[']|[']\\n[']|[']\\t[']|[']\\r[']|['].?[']	{return 'caracter'}
+[0-9]+("."[0-9]+)?\b                { return 'decimal'; }  
+[0-9]+\b                            { return 'entero'; } 
+{bool}                              { return 'booleano'; } 
+//palabras reservadas                                   
+"int"                               { return 'INT'; }
+"string"                            { return 'STRING'; }
+"boolean"                           { return 'BOOLEAN'; }
+"double"                            { return 'DOUBLE'; }
+"char"                              { return 'CHAR'; }
+"const"                             { return 'CONST'; }   
+"if"                                { return 'IF'; }   
+"else"                              { return 'ELSE'; }  
+"switch"                            { return 'SWITCH'; }   
+"case"                              { return 'CASE'; } 
+"default"                           { return 'DEFAULT'; }   
+"break"                             { return 'BREAK'; }  
+"for"                               { return 'FOR'; }  
+"do"                                { return 'DO'; } 
+"while"                             { return 'WHILE'; }   
+"continue"                          { return 'CONTINUE'; }     
+"void"                              { return 'VOID'; } 
+"call"                              { return 'CALL'; } 
+"null"                              { return 'null'; } 
+"return"                            { return 'RETORNO'; }   
+"println"                           { return 'PRINTLN'; } 
+"print"                             { return 'PRINT'; } 
+"typeof"                            { return 'TYPEOF'; }    
+"toLower"                           { return 'TOLOWER'; }     
+"toUpper"                           { return 'TOUPPER'; }  
+"round"                             { return 'ROUND'; }   
+"new"                               { return 'NEW'; }   
+"length"                            { return 'LENGTH'; }      
+"toCharArray"                       { return 'TOCHARARRAY'; }   
+"indexOf"                           { return 'INDEXOF'; }  
+"push"                              { return 'PUSH'; }    
+"pop"                               { return 'POP'; }      
+"splice"                            { return 'SPLICE'; }    
+// ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+([a-zA-Z])[a-zA-Z0-9_]*             { return 'id'; } 
                                                                                                                                                             
-"=="                                 {
-                                        return 'igualDoble'
-                                    }
-"="                                 {
-                                        return 'igual'
-                                    }
-"!="                                {
-                                        return 'diferenteDe'
-                                    }
-"<="                                {
-                                        return 'menorIgual'
-                                    }
-">="                                {
-                                        return 'mayorIgual'
-                                    }
-"<"                                 {
-                                        return 'menorQue'
-                                    }
-">"                                 {
-                                        return 'mayorQue'
-                                    }
-"?"                                 {
-                                        return 'interrogacionCierra'
-                                    }
-":"                                 {
-                                        return 'dosPuntos'
-                                    }
-"!"                                 {
-                                        return 'NOT'
-                                    }
-"||"                                {
-                                        return 'OR'
-                                    }
-"&&"                                {
-                                        return 'AND'
-                                    }
-"^"                                 {
-                                        return 'XOR'
-                                    }
-"("                                 {
-                                        return 'parentesisA'
-                                    }
-")"                                 {
-                                        return 'parentesisC'
-                                    }
-";"                                 {
-                                        return 'ptComa'
-                                    }
-","                                 {
-                                        return 'coma'
-                                    }   
-"++"                                {
-                                        return 'incremento'
-                                    }
-"--"                                {
-                                        return 'decremento'
-                                    }                                                                     
-"+"                                 {
-                                        return 'SUMA'
-                                    }
-"-"                                 {
-                                        return 'RESTA'
-                                    }
-"/"                                 {
-                                        return 'DIVISION'
-                                    }                                    
-"**"                                {
-                                        return 'POTENCIA'
-                                    }
-"*"                                 {
-                                        return 'MULTIPLICACION'
-                                    }
-"%"                                 {
-                                        return 'MODULO'
-                                    }
-"{"                                 {
-                                        return 'llaveA'
-                                    }
-"}"                                 {
-                                        return 'llaveC'
-                                    }
-"["                                 {
-                                        return 'corcheteA'
-                                    }
-"]"                                 {
-                                        return 'corcheteC'
-                                    }
+"=="                                { return 'igualDoble' }
+"="                                 { return 'igual' }
+"!="                                { return 'diferenteDe' }
+"<="                                { return 'menorIgual' }
+">="                                { return 'mayorIgual' }
+"<"                                 { return 'menorQue' }
+">"                                 { return 'mayorQue' }
+"?"                                 { return 'interrogacionCierra' }
+":"                                 { return 'dosPuntos' }
+"!"                                 { return 'NOT' }
+"||"                                { return 'OR' }
+"&&"                                { return 'AND' }
+"^"                                 { return 'XOR' }
+"("                                 { return 'parentesisA' }
+")"                                 { return 'parentesisC' }
+";"                                 { return 'ptComa' }
+","                                 { return 'coma' }   
+"++"                                { return 'incremento' }
+"--"                                { return 'decremento' }                                                                     
+"+"                                 { return 'SUMA' }
+"-"                                 { return 'RESTA' }
+"/"                                 { return 'DIVISION' }                                    
+"**"                                { return 'POTENCIA' }
+"*"                                 { return 'MULTIPLICACION' }
+"%"                                 { return 'MODULO' }
+"{"                                 { return 'llaveA' }
+"}"                                 { return 'llaveC' }
+"["                                 { return 'corcheteA' }
+"]"                                 { return 'corcheteC' }
                                                                       
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 [ \r\t]+                            {}
@@ -234,13 +139,32 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 %nonassoc mayorIgual mayorQue menorIgual menorQue igualDoble diferenteDe
 %left MULTIPLICACION DIVISION MODULO
 %left POTENCIA
+%right incremento decremento
 %right NOT
+%left umenos
+%left parentesisA 
 
 %start ini
 
 %%
 
-ini : INSTRUCCIONES EOF {return $1}  
+ini : ENTRADAS EOF { return $1; }
+    | EOF { return ""; }
+;
+
+ENTRADA:    DECLARACION_VAR puntoYcoma { $$ = $1; }
+        |   DECLARACION_VECT {}
+        |   INSTRUCCION { $$ = $1; }
+        |       error puntoYcoma {
+                        console.log("Error sintáctico en la línea: "+(this._$.first_line)+" en la columna: "+(this._$.first_column));
+                        /**
+                        * Pegar en el error de la gramatica.js
+                        console.log("Error sintáctico no se esperaba "+(yyloc.match)+" en la línea: "+(yylineno+1)+" en la columna: "+(yyloc.first_column)); 
+                        const error = new Excepcion("Error sintáctico", "Error sintáctico no se esperaba "+(this.terminals_[symbol] || symbol)+" en la línea: "+(yylineno)+" en la columna: "+(yyleng), yylineno, yyleng);
+                        consola.set_Error(error);
+                        return [];
+                        */
+                        }
 ;
 
 INSTRUCCIONES : INSTRUCCIONES INSTRUCCION { $1.push($2); $$=$1;}
@@ -284,19 +208,15 @@ INSTRUCCIONIFSIMPLE : DECLARACION { $$=$1; }
                     | BREAK { $$=$1; } 
 ;
 
-DECLARACION : DECLARACIONNORMAL { $$=$1; } 
-            | DECLARACIONCONSTANTE { $$=$1; } 
-;
-
-DECLARACIONNORMAL: TIPODATO id igual EXPRESIONARITMETICA  {$$= new Declaracion($2,$1,$4,true,@1.first_line, @1.first_column );}
-;
-
-
-DECLARACIONCONSTANTE: CONST TIPODATO id igual EXPRESIONARITMETICA {$$= new Declaracion($3,$2,$5,false,@1.first_line, @1.first_column );}
+DECLARACION : TIPODATO IDS igual EXPRESIONARITMETICA  {$$= new Declaracion($2,$1,$4,true,@1.first_line, @1.first_column );}
+            | CONST TIPODATO IDS igual EXPRESIONARITMETICA {$$= new Declaracion($3,$2,$5,false,@1.first_line, @1.first_column );}
 ;
 
 ASIGNACION : id igual EXPRESIONARITMETICA  {$$= new Asignar($1,$3,@1.first_line, @1.first_column );}
 ;
+
+IDS: IDS coma id  { $1.push($3);$$=$1;}
+    | id {$$ = [$1]}
 
 TIPODATO: INT {$$=$1;} 
         | STRING {$$=$1;} 
