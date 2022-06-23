@@ -8,7 +8,7 @@ export class Singleton {
 
     private consola: string = ""
     private ast: string = ""
-    private errores: Errores[] = []
+    private errores: string = "";
     private simbolos: Simbolo[] = [];
 
     
@@ -27,7 +27,7 @@ export class Singleton {
     public limpiarConsola(){
         this.consola = "";
         this.ast =  "";
-        this.errores = [];
+        this.errores = "";
         this.simbolos = [];
     }
 
@@ -43,10 +43,24 @@ export class Singleton {
 
 
     public add_errores(data: Errores) {
-        this.errores.push(data)
+        this.errores +=
+        "<tr>" +
+        "<td>" + data.tipo + "</td>" +
+        "<td>" + data.err + "</td>" +
+        "<td>" + data.line + "</td>" +
+        "<td>" + data.column + "</td>" +
+        "</tr>";
     }
-    public get_errores():Errores[] {
-        return this.errores
+    public get_errores():string {
+        return `
+        <table class=\"table table-striped\" border=1 style="width: 75%;margin: 0 auto;" cellpadding ="5">
+            <tr class=\"table-dark\">
+                <th>Tipo de error</th>
+                <th>Descripcion</th>
+                <th>Línea</th>
+                <th>Columna</th>
+            </tr>${this.errores}
+        </table>`;
     }
 
     public addAst(data: string){

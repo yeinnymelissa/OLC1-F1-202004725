@@ -206,12 +206,60 @@ function Editor(){
                         Reportes
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <li><button className="dropdown-item" type="button">Reporte AST</button></li>
-                        <li><button className="dropdown-item" type="button" >Reporte de errores</button></li>
-                        <li><button className="dropdown-item" type="button">Reporte TS</button></li>
+                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteAST">Reporte AST</button></li>
+                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteErrores">Reporte de errores</button></li>
+                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteTS">Reporte TS</button></li>
                     </ul>
                 </div>       
                 <button type="button" className="btn btn-primary izq" onClick={run}>Run</button>         
+            </div>
+            <div className="modal fade" id="reporteAST" tabIndex="-1" aria-labelledby="reporteASTLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="reporteASTLabel">Reporte AST</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body" id='body-ast'>
+                        Hola
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div className="modal fade" id="reporteErrores" tabindex="-1" aria-labelledby="reporteErroresLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="reporteErroresLabel">Reporte de Errores</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body" id='body-err'>
+                        ...
+                    </div>
+                    <div className="modal-footer">
+                        <button className="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="reporteTS" tabindex="-1" aria-labelledby="reporteTSLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reporteTSLabel">Reportes TS</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id='body-ts'>
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
             </div>
             <div className="editCom">
                 <div className="editorE">
@@ -227,7 +275,7 @@ function Editor(){
                     </ul>
                     <div className="tab-content" id="myTabContent">
                         <div className="bloque tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <textarea className="text" name="prueba" id="code0" cols="30" rows="16"></textarea>
+                            <textarea className="text" name="prueba" id="code0"></textarea>
                         </div>
                     </div>        
                 </div>

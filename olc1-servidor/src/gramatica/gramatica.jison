@@ -16,9 +16,8 @@
     const {While} = require('../instrucciones/while');
     const {DoWhile} = require('../instrucciones/dowhile');
     const {Errores} = require('../errores/errores');
-    var errores = [];
-    module.exports.errores = errores;
-
+    const {Singleton} = require('../patronSingleton/singleton');
+    
     var cadena = '';
 %}
 
@@ -29,9 +28,7 @@
 %x string
 
 
-bool    "true"|"false"   
-cadenaS    \"("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\"])*\"
-caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
+bool    "true"|"false"
 
 %%
 
@@ -89,7 +86,8 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 "splice"                            { return 'SPLICE'; }    
 // ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 ([a-zA-Z])[a-zA-Z0-9_]*             { return 'id'; } 
-                                                                                                                                                            
+
+//SIGNOS                                                                                                                                                       
 "=="                                { return 'igualDoble' }
 "="                                 { return 'igual' }
 "!="                                { return 'diferenteDe' }
@@ -125,6 +123,7 @@ caracterS \'("\\\""| "\\r" | "\\\\" | "\\n" | "\\t" | [^\'])?\'
 \n                                  {}
 <<EOF>>                             return 'EOF';
 .                                   {
+                                        
                                         let error = new Errores(yylloc.first_line,  yylloc.first_column, "La expresión " + yytext + " no pertenece al lenguaje", "Léxico")
                                         errores.push(error);
                                         console.log("ERROR LEXICO EN LA LINEA "+ yylloc.first_line + "Y EN LA COLUMNA "+yylloc.first_column + " EL TEXTO ES "+ yytext);
