@@ -1,7 +1,7 @@
 import { Expresion } from "../abstract/expresion";
 import { Instruccion } from "../abstract/instruccion";
 import { Errores } from "../errores/errores";
-import { Singleton } from "../patronSigleton/singleton";
+import { Singleton } from "../patronSingleton/singleton";
 import { Entorno } from "../simbolos/entorno";
 
 export class Asignar extends Instruccion {
@@ -24,12 +24,14 @@ export class Asignar extends Instruccion {
         if (variable == null || variable == undefined){
             const error = new Errores(this.line, this.column, `Variable con el nombre '${this.nombre}' inexistente.`,"Error semántico");
             singleton.add_errores(error);
+            console.log(error)
             bandera = false;
         } 
 
         if (!variable?.editable){
             const error = new Errores(this.line, this.column, `La asignación no se puede realizar, la variable con nombre '${this.nombre}' no es editable.`, "Semántico");
             singleton.add_errores(error);
+            console.log(error)
             bandera = false;
         } 
 
@@ -38,11 +40,12 @@ export class Asignar extends Instruccion {
             const error = new Errores(this.line, this.column, `La asignación no se puede realizar, la variable con nombre '${this.nombre}' es de tipo [${singleton.getTipo(variable?.tipo)}] y se le esta tratando de asignar un tipo [${singleton.getTipo(expresion.tipo)}]`,"Semántico");
             singleton.add_errores(error);
             bandera = false;
+            console.log(error)
             throw new Error("Los tipos no coinciden en la asiganción de valores de la variable");
         }
 
         if(bandera == true){
-            env.actualizar_variable(this.nombre,this.expresion);
+            env.actualizar_variable(this.nombre, expresion.valor);
         }
         
     }

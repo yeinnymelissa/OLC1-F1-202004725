@@ -1,7 +1,7 @@
 import { Expresion } from "../abstract/expresion"
 import { Retorno } from "../abstract/retorno"
 import { Errores } from "../errores/errores"
-import { Singleton } from "../patronSigleton/singleton"
+import { Singleton } from "../patronSingleton/singleton"
 import { Entorno } from "../simbolos/entorno"
 import { Tipo } from "../simbolos/tipo"
 
@@ -17,10 +17,6 @@ export class Acceso extends Expresion {
 
     public run(env: Entorno): Retorno {
 
-
-        //preguntar si exite variable
-        //sino existe 
-        //error semanticos
         const variable_ts= env.get_variable(this.id)
 
 

@@ -88,8 +88,6 @@ public getTipo(tipo: Tipo): string{
           return "boolean";
       case Tipo.VOID:
           return "void";
-      case Tipo.VECTOR:
-          return "vector";
       default:
           return "error";
   }

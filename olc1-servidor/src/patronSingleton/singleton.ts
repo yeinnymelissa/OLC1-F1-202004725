@@ -9,8 +9,9 @@ export class Singleton {
     private consola: string = ""
     private ast: string = ""
     private errores: string = "";
-    private simbolos: Simbolo[] = [];
-
+    private simbolos: string = "";
+    private contadorEnv: number = 1;
+    private graficarTs: any[] = [];
     
     constructor() {
     }
@@ -28,7 +29,9 @@ export class Singleton {
         this.consola = "";
         this.ast =  "";
         this.errores = "";
-        this.simbolos = [];
+        this.simbolos = "";
+        this.contadorEnv = 0;
+        this.graficarTs = [];
     }
 
     public add_consola(data: string) {
@@ -72,11 +75,42 @@ export class Singleton {
     }
 
     public add_simbolos(data: Simbolo) {
-        this.simbolos.push(data)
+        this.simbolos +=
+        "<tr>" +
+        "<td>" + this.getTipo(data.tipo) + "</td>" +
+        "<td>" + data.err + "</td>" +
+        "<td>" + data.line + "</td>" +
+        "<td>" + data.column + "</td>" +
+        "</tr>";
     }
-    public get_simbolos():Simbolo[] {
-        return this.simbolos
+    public get_simbolos():string {
+        return `
+        <table class=\"table table-striped\" border=1 style="width: 75%;margin: 0 auto;" cellpadding ="5">
+            <tr class=\"table-dark\">
+                <th>Tipo de error</th>
+                <th>Descripcion</th>
+                <th>Línea</th>
+                <th>Columna</th>
+            </tr>${this.simbolos}
+        </table>`;
     }
+
+    public add_graficarTs(data: string) {
+        this.graficarTs.push(data)
+    }
+    public get_graficarTs():any[]{
+        return this.graficarTs
+    }
+
+    public get_envID(): number {
+        return this.contadorEnv
+    }
+
+    public aumentarEnv(){
+        this.contadorEnv += 1;
+    }
+
+
 
     public getTipo(tipo: Tipo | undefined): string{
         switch(tipo){
@@ -92,8 +126,6 @@ export class Singleton {
                 return "boolean";
             case Tipo.VOID:
                 return "void";
-            case Tipo.VECTOR:
-                return "vector";
             default:
                 return "error";
         }

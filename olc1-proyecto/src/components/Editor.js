@@ -150,7 +150,7 @@ function Editor(){
                 const consola = document.querySelector('#console');
 
                 axios
-                    .post('http://localhost:4000/run', body)
+                    .post('http://localhost:8000/run', body)
 
                     .then(({ data }) => {
                         consola.innerHTML = '';
@@ -168,19 +168,17 @@ function Editor(){
     }
 
     function reporteErrores(){
-        const body = {datos: ""}
-        const consola = document.querySelector('#console');
+        const errores = document.querySelector('#body-err');
         axios
-            .get('http://localhost:4000/errores')
+            .post('http://localhost:8000/prueba')
             .then(({ data }) => {
                 //si sale bien ejecuta esto
-                console.log(data)
-                consola.innerHTML = '';
+                errores.innerHTML = '';
                 if (data.err) {
                     return;
                 }
 
-                consola.innerHTML = data;
+                errores.innerHTML = data;
             })
             .catch((err) => {
                 //si sale mal ejecuta esto
@@ -214,7 +212,7 @@ function Editor(){
                 <button type="button" className="btn btn-primary izq" onClick={run}>Run</button>         
             </div>
             <div className="modal fade" id="reporteAST" tabIndex="-1" aria-labelledby="reporteASTLabel" aria-hidden="true">
-                <div className="modal-dialog">
+                <div className="modal-dialog modal-fullscreen">
                     <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="reporteASTLabel">Reporte AST</h5>
@@ -229,34 +227,67 @@ function Editor(){
                     </div>
                 </div>
             </div>
-            <div className="modal fade" id="reporteErrores" tabindex="-1" aria-labelledby="reporteErroresLabel" aria-hidden="true">
-                <div className="modal-dialog">
+            <div className="modal fade" id="reporteErrores" tabIndex="-1" aria-labelledby="reporteErroresLabel" aria-hidden="true">
+                <div className="modal-dialog modal-fullscreen">
                     <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="reporteErroresLabel">Reporte de Errores</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body" id='body-err'>
-                        ...
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+
                     </div>
                     <div className="modal-footer">
-                        <button className="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="reporteTS" tabindex="-1" aria-labelledby="reporteTSLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="reporteTSLabel">Reportes TS</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className="modal fade" id="reporteTS" tabIndex="-1" aria-labelledby="reporteTSLabel" aria-hidden="true">
+                <div className="modal-dialog modal-fullscreen">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="reporteTSLabel">Reportes TS</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id='body-ts'>
-                        ...
+                    <div className="modal-body color-ts" id='body-ts'>
+                    <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
+                        <div className="carousel-indicators">
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                        </div>
+                        <div className="carousel-inner">
+                            <div className="carousel-item active">
+                                <p className="d-block w-100">
+                                Hola</p>
+                            </div>
+                            <div className="carousel-item">
+                                <p className="d-block w-100">
+                                Hola</p>
+                            </div>
+                            <div className="carousel-item">
+                            <p className="d-block w-100">
+                                Hola</p>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                     </div>
                 </div>

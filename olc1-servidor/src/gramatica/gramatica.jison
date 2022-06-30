@@ -10,14 +10,28 @@
     const {opcionesRelacionales} = require('../expresiones/opcionesRelacionales');
     const {Acceso} = require('../expresiones/acceso');
     const {Asignar} = require('../instrucciones/asignar');
-    const {Print} = require('../instrucciones/print');
-    const {Println} = require('../instrucciones/println');
+    const {Print} = require('../instrucciones/Reservadas/print');
+    const {Println} = require('../instrucciones/Reservadas/println');
     const {Bloque} = require('../instrucciones/bloque');
-    const {While} = require('../instrucciones/while');
-    const {DoWhile} = require('../instrucciones/dowhile');
     const {Errores} = require('../errores/errores');
     const {Singleton} = require('../patronSingleton/singleton');
-    
+    const {DecrementoEx} = require('../expresiones/Aritmeticas/decrementoEx');
+    const {IncrementoEx} = require('../expresiones/Aritmeticas/incrementoEx');
+    const {Round} = require('../expresiones/Reservadas/round');
+    const {toLower} = require('../expresiones/Reservadas/toLower');
+    const {TypeOf} = require('../expresiones/Reservadas/typeOf');
+    //Segunda tanda
+    const {Llamada} = require('../expresiones/call');
+    const {For} = require('../instrucciones/Ciclicas/for');
+    const {While} = require('../instrucciones/Ciclicas/while');
+    const {If} = require('../instrucciones/control/if');
+    const {Decremento} = require('../instrucciones/IncDec/decremento');
+    const {Incremento} = require('../instrucciones/IncDec/incremento');
+    const {Break} = require('../instrucciones/Transicion/break');
+    const {Continue} = require('../instrucciones/Transicion/continue');
+    const {Return} = require('../instrucciones/Transicion/return');
+    const {InsFuncion} = require('../instrucciones/funcion');
+
     var cadena = '';
 %}
 
@@ -32,11 +46,11 @@ bool    "true"|"false"
 
 %%
 
-["]				        { cadena = ''; this.begin("string"); }
+["]				{ cadena = ''; this.begin("string"); }
 <string>[^"\\]+			{ cadena += yytext; }
 <string>"\\\""			{ cadena += "\""; }
 <string>"\n"			{ cadena += "\n"; }
-<string>\s			    { cadena += " ";  }
+<string>\s			{ cadena += " ";  }
 <string>"\t"			{ cadena += "\t"; }
 <string>"\\\\"			{ cadena += "\\"; }
 <string>"\'"			{ cadena += "\'"; }
@@ -47,7 +61,7 @@ bool    "true"|"false"
 "//".*                              {console.log("Comentario una línea");}
 [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {console.log("Comentario multi");}
 [']\\\\[']|[']\\\"[']|[']\\\'[']|[']\\n[']|[']\\t[']|[']\\r[']|['].?[']	{return 'caracter'}
-[0-9]+("."[0-9]+)?\b                { return 'decimal'; }  
+[0-9]+("."[0-9]+)\b                { return 'decimal'; }  
 [0-9]+\b                            { return 'entero'; } 
 {bool}                              { return 'booleano'; } 
 //palabras reservadas                                   
@@ -83,11 +97,13 @@ bool    "true"|"false"
 "indexOf"                           { return 'INDEXOF'; }  
 "push"                              { return 'PUSH'; }    
 "pop"                               { return 'POP'; }      
-"splice"                            { return 'SPLICE'; }    
+"splice"                            { return 'SPLICE'; }  
+"graficar_ts"                       { return 'GRAFICAR'; }   
 // ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 ([a-zA-Z])[a-zA-Z0-9_]*             { return 'id'; } 
 
-//SIGNOS                                                                                                                                                       
+//SIGNOS                
+"."                                 { return 'punto' }                                                                                                                                       
 "=="                                { return 'igualDoble' }
 "="                                 { return 'igual' }
 "!="                                { return 'diferenteDe' }
@@ -123,9 +139,9 @@ bool    "true"|"false"
 \n                                  {}
 <<EOF>>                             return 'EOF';
 .                                   {
-                                        
-                                        let error = new Errores(yylloc.first_line,  yylloc.first_column, "La expresión " + yytext + " no pertenece al lenguaje", "Léxico")
-                                        errores.push(error);
+                                        var consola = Singleton.getInstance(); 
+                                        const error = new Errores(yylloc.first_line , yylloc.first_column,"El caracter "+ yytext+ "no se reconoce en el lenguaje.","Léxico");
+                                        consola.add_errores(error);
                                         console.log("ERROR LEXICO EN LA LINEA "+ yylloc.first_line + "Y EN LA COLUMNA "+yylloc.first_column + " EL TEXTO ES "+ yytext);
                                     }
 /lex
@@ -138,7 +154,6 @@ bool    "true"|"false"
 %nonassoc mayorIgual mayorQue menorIgual menorQue igualDoble diferenteDe
 %left MULTIPLICACION DIVISION MODULO
 %left POTENCIA
-%right incremento decremento
 %right NOT
 %left umenos
 %left parentesisA 
@@ -147,23 +162,7 @@ bool    "true"|"false"
 
 %%
 
-ini : ENTRADAS EOF { return $1; }
-    | EOF { return ""; }
-;
-
-ENTRADA:    DECLARACION_VAR puntoYcoma { $$ = $1; }
-        |   DECLARACION_VECT {}
-        |   INSTRUCCION { $$ = $1; }
-        |       error puntoYcoma {
-                        console.log("Error sintáctico en la línea: "+(this._$.first_line)+" en la columna: "+(this._$.first_column));
-                        /**
-                        * Pegar en el error de la gramatica.js
-                        console.log("Error sintáctico no se esperaba "+(yyloc.match)+" en la línea: "+(yylineno+1)+" en la columna: "+(yyloc.first_column)); 
-                        const error = new Excepcion("Error sintáctico", "Error sintáctico no se esperaba "+(this.terminals_[symbol] || symbol)+" en la línea: "+(yylineno)+" en la columna: "+(yyleng), yylineno, yyleng);
-                        consola.set_Error(error);
-                        return [];
-                        */
-                        }
+ini : INSTRUCCIONES EOF {return $1}  
 ;
 
 INSTRUCCIONES : INSTRUCCIONES INSTRUCCION { $1.push($2); $$=$1;}
@@ -171,86 +170,72 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION { $1.push($2); $$=$1;}
 ;
 
 INSTRUCCION : DECLARACION ptComa { $$=$1; } 
-            | ASIGNACION ptComa
-            | INCREMENTODECREMENTO ptComa { $$=$1; } 
-            | SENTENCIAIF { $$=$1; } 
-            | SENTENCIASWITCH { $$=$1; } 
-            | SENTENCIAFOR { $$=$1; } 
-            | SENTENCIADOWHILE { $$=$1; } 
-            | SENTENCIAWHILE { $$=$1; } 
-            | BREAK ptComa { $$=$1; } 
-            | CONTINUE ptComa { $$=$1; } 
+            | ASIGNACION ptComa { $$=$1; } 
+            | INCREMENTODECREMENTO ptComa 
+            | SENTENCIAIF  
+            | SENTENCIASWITCH 
+            | SENTENCIAFOR  
+            | SENTENCIADOWHILE 
+            | SENTENCIAWHILE  
+            | BREAK ptComa {$$= new Break( @1.first_line, @1.first_column);}
+            | CONTINUE ptComa {$$= new Continue( @1.first_line, @1.first_column);}
             | INSTRUCCIONLLAMAR ptComa { $$=$1; } 
             | FUNCION { $$=$1; } 
             | METODO { $$=$1; } 
             | FUNCIONPRINTLN ptComa { $$=$1; } 
             | FUNCIONPRINT ptComa { $$=$1; } 
-            | FUNCIONTYPEOF ptComa { $$=$1; } 
+            | FUNCIONTYPEOF ptComa 
             | INSTRUCCIONRETURN ptComa { $$=$1; } 
+            | VECTORES ptComa  
+            | GRAFICARTS 
+            | TERNARIO
+            | PUSHFUNCION ptComa
+            | POPFUNCION 
+            | SPLICEFUNCION 
             | BLOQUE { $$=$1; } 
-            | error    ';'  { 
-                //get instance
-                //meterlo
-                let error = new Errores(yylloc.first_line,  yylloc.first_column, "La expresión " + yytext + " no pertenece al lenguaje", "Sintáctico")
-                errores.push(error);
-                console.log("Error sintactico en la linea"+(yylineno+1)); }
+            | error    ptComa  { 
+                var consola = Singleton.getInstance(); 
+                const error = new Errores(yylloc.first_line , yylloc.first_column,`El caracter ${(this.terminals_[symbol] || symbol)} no se esperaba en esta posicion`,"Sintáctico");
+                consola.add_errores(error);
+                console.log("Error sintactico en la linea"+(yylineno+1));
+                 }
 ;
 
-INSTRUCCIONIFSIMPLE : DECLARACION { $$=$1; } 
-                    | ASIGNACION { $$=$1; } 
-                    | INCREMENTODECREMENTO { $$=$1; } 
-                    | INSTRUCCIONLLAMAR { $$=$1; } 
-                    | FUNCIONPRINTLN { $$=$1; } 
-                    | FUNCIONPRINT { $$=$1; } 
-                    | FUNCIONTYPEOF { $$=$1; } 
-                    | INSTRUCCIONRETURN { $$=$1; } 
-                    | BREAK { $$=$1; } 
-;
 
 DECLARACION : TIPODATO IDS igual EXPRESIONARITMETICA  {$$= new Declaracion($2,$1,$4,true,@1.first_line, @1.first_column );}
             | CONST TIPODATO IDS igual EXPRESIONARITMETICA {$$= new Declaracion($3,$2,$5,false,@1.first_line, @1.first_column );}
+            | TIPODATO IDS {$$= new Declaracion($2,$1,null,false,@1.first_line, @1.first_column );}
 ;
 
 ASIGNACION : id igual EXPRESIONARITMETICA  {$$= new Asignar($1,$3,@1.first_line, @1.first_column );}
+            | id corcheteA entero corcheteC igual EXPRESIONARITMETICA
+            | id corcheteA entero corcheteC corcheteA entero corcheteC igual EXPRESIONARITMETICA
 ;
 
 IDS: IDS coma id  { $1.push($3);$$=$1;}
     | id {$$ = [$1]}
-
-TIPODATO: INT {$$=$1;} 
-        | STRING {$$=$1;} 
-        | BOOLEAN {$$=$1;} 
-        | DOUBLE {$$=$1;} 
-        | CHAR {$$=$1;} 
 ;
 
-IGUALACIONDEDATO: decimal {$$=new Literal($1,Tipo.DOUBLE , @1.first_line, @1.first_column)}
+TIPODATO: INT {$$=Tipo.INT;} 
+        | STRING {$$=Tipo.STRING;} 
+        | BOOLEAN {$$=Tipo.BOOLEAN;} 
+        | DOUBLE {$$=Tipo.DOUBLE;} 
+        | CHAR {$$=Tipo.CHAR;} 
+;
+
+IGUALACIONDEDATO: decimal {$$=new Literal($1,Tipo.DOUBLE , @1.first_line, @1.first_column); console.log("pase por aca decimal");}
                 | cadena {$$=new Literal($1,Tipo.STRING , @1.first_line, @1.first_column)}
                 | booleano {$$=new Literal($1,Tipo.BOOLEAN , @1.first_line, @1.first_column)}
-                | entero {$$=new Literal($1,Tipo.INT , @1.first_line, @1.first_column)}
+                | entero {$$=new Literal($1,Tipo.INT , @1.first_line, @1.first_column); console.log("pase por aca");}
                 | caracter {$$=new Literal($1,Tipo.CHAR , @1.first_line, @1.first_column)}
-                | RESTA entero {$$=new Literal($1+$2,Tipo.INT , @1.first_line, @1.first_column)}
-                | RESTA decimal {$$=new Literal($1+$2,Tipo.DOUBLE , @1.first_line, @1.first_column)}
                 | null {$$=new Literal($1,Tipo.NULL , @1.first_line, @1.first_column)}
 ;
 
 
-SENTENCIAIF: IF parentesisA EXPRESIONLOGICA parentesisC VARIOSIF
+SENTENCIAIF: IF parentesisA EXPRESIONLOGICA parentesisC BLOQUE ELSE BLOQUE {$$=new If($3,$5,$7 , @1.first_line, @1.first_column)}
+            | IF parentesisA EXPRESIONLOGICA parentesisC BLOQUE {$$=new If($3,$5,null, @1.first_line, @1.first_column)}
 ;
 
-SENTENCIAELSEIF: SENTENCIAELSEIF ELSE IF parentesisA EXPRESIONLOGICA parentesisC BLOQUE
-                | SENTENCIAELSEIF ELSE BLOQUE
-                |
-;
-
-SENTENCIAELSEIFSIMPLE: SENTENCIAELSEIFSIMPLE ELSE IF parentesisA EXPRESIONLOGICA parentesisC INSTRUCCIONIFSIMPLE ptComa
-                    | SENTENCIAELSEIFSIMPLE ELSE INSTRUCCIONIFSIMPLE ptComa
-                    |
-;
-
-VARIOSIF: BLOQUE SENTENCIAELSEIF
-        | INSTRUCCIONIFSIMPLE ptComa SENTENCIAELSEIFSIMPLE
-;
 
 SENTENCIASWITCH: SWITCH parentesisA id parentesisC llaveA CASOS llaveC
 ;
@@ -263,7 +248,7 @@ CASO: CASE IGUALACIONDEDATO dosPuntos INSTRUCCIONES
     | DEFAULT dosPuntos INSTRUCCIONES
 ;
 
-SENTENCIAFOR: FOR parentesisA VARIABLEFOR EXPRESIONESRELACIONALES ptComa INCREMENTODECREMENTOFOR parentesisC BLOQUE
+SENTENCIAFOR: FOR parentesisA VARIABLEFOR EXPRESIONESRELACIONALES ptComa INCREMENTODECREMENTOFOR parentesisC BLOQUE {$$= new For($3,$4, $6, $8, @1.first_line, @1.first_column);}
 ;
 
 VARIABLEFOR : DECLARACION ptComa {$$=$1;} 
@@ -276,12 +261,24 @@ EXPRESIONARITMETICA:  EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  {$$= new Ari
                     | EXPRESIONARITMETICA DIVISION EXPRESIONARITMETICA  {$$= new Aritmeticas($1,$3,opcionesAritmeticas.DIVISION, @1.first_line, @1.first_column);}
                     | EXPRESIONARITMETICA MODULO EXPRESIONARITMETICA {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MODULO, @1.first_line, @1.first_column);}
                     | EXPRESIONARITMETICA POTENCIA EXPRESIONARITMETICA {$$= new Aritmeticas($1,$3,opcionesAritmeticas.POTENCIA, @1.first_line, @1.first_column);}
-                    | parentesisA EXPRESIONARITMETICA parentesisC {$$=$3;}
+                    | RESTA EXPRESIONARITMETICA %prec umenos {$$= new Aritmeticas(null,$2,opcionesAritmeticas.NEGADO, @1.first_line, @1.first_column);}
+                    | parentesisA EXPRESIONARITMETICA parentesisC {$$=$2;}
                     | id  {$$= new Acceso($1,@1.first_line, @1.first_column);}   
                     | IGUALACIONDEDATO   {$$=$1;}
-                    | EXPRESIONLLAMAR {$$=$1;}
-                    | FUNCIONTYPEOF {$$=$1;}
-                    | INCREMENTODECREMENTO {$$=$1;}
+                    | EXPRESIONLLAMAR 
+                    | FUNCIONTYPEOF 
+                    | id incremento {$$= new IncrementoEx($1, @1.first_line, @1.first_column);}
+                    | id decremento {$$= new DecrementoEx($1, @1.first_line, @1.first_column);}
+                    | incremento id {$$= new IncrementoEx($2, @1.first_line, @1.first_column);}
+                    | decremento id {$$= new DecrementoEx($2, @1.first_line, @1.first_column);}
+                    | ROUNDEXP {$$=$1;}
+                    | TOLOWEREXP {$$=$1;}
+                    | TOUPPEREXP {$$=$1;}
+                    | ACCESOVEC 
+                    | TOCHARARRAYEXP 
+                    | INDEXOFEXP 
+                    | LENGTHEXP
+                    | PUSHFUNCION 
 ;
 
 EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.MAYOR, @1.first_line, @1.first_column);}
@@ -296,21 +293,21 @@ EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALE
 EXPRESIONLOGICA: EXPRESIONLOGICA OR EXPRESIONLOGICA {$$= new Logicas($1,$3,opcionesLogicas.OR, @1.first_line, @1.first_column);}
                 | EXPRESIONLOGICA AND EXPRESIONLOGICA {$$= new Logicas($1,$3,opcionesLogicas.AND, @1.first_line, @1.first_column);}
                 | EXPRESIONLOGICA XOR EXPRESIONLOGICA {$$= new Logicas($1,$3,opcionesLogicas.XOR, @1.first_line, @1.first_column);}
-                | NOT EXPRESIONLOGICA {$$= new Logicas($2,null,opcionesLogicas.NOT, @1.first_line, @1.first_column);}
+                | NOT EXPRESIONLOGICA {$$= new Logicas(null,$2,opcionesLogicas.NOT, @1.first_line, @1.first_column);}
                 | EXPRESIONESRELACIONALES {$$=$1;}
 ;
 
-INCREMENTODECREMENTOFOR: INCREMENTODECREMENTO 
-                        | FORINCREMENTODECREMENTO
+INCREMENTODECREMENTOFOR: INCREMENTODECREMENTO {$$=$1;}
+                        | FORINCREMENTODECREMENTO {$$=$1;}
 ;
 
-INCREMENTODECREMENTO: id incremento
-                    | id decremento
-                    | incremento id
-                    | decremento id
+INCREMENTODECREMENTO: id incremento {$$= new Incremento($1, @1.first_line, @1.first_column);}
+                    | id decremento {$$= new Decremento($1, @1.first_line, @1.first_column);}
+                    | incremento id {$$= new Incremento($2, @1.first_line, @1.first_column);}
+                    | decremento id {$$= new Decremento($2, @1.first_line, @1.first_column);}
 ;
 
-FORINCREMENTODECREMENTO: id igual SUMARESTA
+FORINCREMENTODECREMENTO: id igual SUMARESTA {$$=$3;}
 ;
 
 SUMARESTA: id SUMA SUMARESTA  {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MAS, @1.first_line, @1.first_column);}
@@ -319,52 +316,112 @@ SUMARESTA: id SUMA SUMARESTA  {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MAS
         | IGUALACIONDEDATO {$$=$1;}
 ;
 
-SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE 
+SENTENCIAWHILE: WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE {$$= new While($3,$5, @1.first_line, @1.first_column);}
 ;
 
 SENTENCIADOWHILE: DO BLOQUE WHILE parentesisA EXPRESIONLOGICA parentesisC BLOQUE 
 ;
 
-METODO: VOID id parentesisA PARAMETROS parentesisC BLOQUE
+METODO: VOID id parentesisA PARAMETROS parentesisC BLOQUE  {$$= new InsFuncion($2,$6,$4, Tipo.VOID, @1.first_line, @1.first_column);}
+        | VOID id parentesisA parentesisC BLOQUE {$$= new InsFuncion($2,$5,[], Tipo.VOID, @1.first_line, @1.first_column);}
 ;
 
-PARAMETROS: PARAMETROS coma PARAMETRO  
-        | PARAMETRO 
-        |
-;
-
-PARAMETRO: TIPODATO id
-;
-
-FUNCION: TIPODATO id parentesisA PARAMETROS parentesisC BLOQUE
+PARAMETROS: PARAMETROS coma EXPRESIONARITMETICA { $1.push($3);$$=$1;}
+        | EXPRESIONARITMETICA {$$ = [$1]}
 ;
 
 
+FUNCION: TIPODATO id parentesisA PARAMETROS parentesisC BLOQUE {$$= new InsFuncion($2,$6,$4, $1, @1.first_line, @1.first_column);}
+        | TIPODATO id parentesisA parentesisC BLOQUE {$$= new InsFuncion($2,$5,[],$1, @1.first_line, @1.first_column);}
+;
 
-PARAMETROSCALL: PARAMETROSCALL coma IGUALACIONDEDATO  
-            | IGUALACIONDEDATO 
-            |
+PARAMETROSCALL: PARAMETROSCALL coma EXPRESIONARITMETICA  { $1.push($3);$$=$1;}
+            | EXPRESIONARITMETICA {$$ = [$1]}
 ;
 
 INSTRUCCIONLLAMAR: CALL id parentesisA PARAMETROSCALL parentesisC 
+                | CALL id parentesisA parentesisC 
 ;
 
-EXPRESIONLLAMAR: id parentesisA PARAMETROSCALL parentesisC 
+EXPRESIONLLAMAR: id parentesisA PARAMETROSCALL parentesisC {$$= new Llamada($1,$3, @1.first_line, @1.first_column);}
+                | id parentesisA  parentesisC {$$= new Llamada($1,[], @1.first_line, @1.first_column);}
 ;
 
-INSTRUCCIONRETURN: RETORNO
-                | RETORNO EXPRESIONARITMETICA
+INSTRUCCIONRETURN: RETORNO {$$= new Return(null, @1.first_line, @1.first_column);}
+                | RETORNO EXPRESIONARITMETICA {$$= new Return($2, @1.first_line, @1.first_column);}
 ; 
 
-FUNCIONPRINTLN: PRINTLN parentesisA EXPRESIONARITMETICA parentesisC {$$= new Println($3, @1.first_line, @1.first_column);}
+FUNCIONPRINTLN: PRINTLN parentesisA EXPRESIONLOGICA parentesisC {$$= new Println($3, @1.first_line, @1.first_column);}
 ;
 
-FUNCIONPRINT: PRINT parentesisA EXPRESIONARITMETICA parentesisC {$$= new Print($3, @1.first_line, @1.first_column);}
+FUNCIONPRINT: PRINT parentesisA EXPRESIONLOGICA parentesisC {$$= new Print($3, @1.first_line, @1.first_column);}
 ;
 
-FUNCIONTYPEOF: TYPEOF parentesisA EXPRESIONARITMETICA parentesisC
+FUNCIONTYPEOF: TYPEOF parentesisA EXPRESIONLOGICA parentesisC {$$= new TypeOf($3, @1.first_line, @1.first_column);}
 ;
 
 BLOQUE: llaveA INSTRUCCIONES llaveC  {$$= new Bloque($2,@1.first_line, @1.first_column)}
-        | llaveA llaveC
+        | llaveA llaveC {$$= new Bloque([],@1.first_line, @1.first_column)}
+;
+
+TOLOWEREXP: TOLOWER parentesisA EXPRESIONARITMETICA parentesisC {$$= new toLower($3,@1.first_line, @1.first_column)}
+;
+
+TOUPPEREXP: TOUPPER parentesisA EXPRESIONARITMETICA parentesisC {$$= new toUpper($3,@1.first_line, @1.first_column)}
+;
+
+ROUNDEXP: ROUND parentesisA EXPRESIONARITMETICA parentesisC {$$= new Round($3,@1.first_line, @1.first_column)}
+;
+
+VECTORES: TIPODATO id corcheteA corcheteC igual NEW TIPODATO corcheteA entero corcheteC
+        | TIPODATO id corcheteA corcheteC igual corcheteA COMASVEC corcheteC
+        | TIPODATO id corcheteA corcheteC corcheteA corcheteC igual NEW TIPODATO corcheteA entero corcheteC corcheteA entero corcheteC
+        | TIPODATO id corcheteA corcheteC corcheteA corcheteC igual corcheteA COMASMATRIZ corcheteC
+;
+
+COMASVEC: COMASVEC coma EXPRESIONARITMETICA { $1.push($3); $$=$1;}
+        | EXPRESIONARITMETICA {$$ = [$1]}
+;
+
+COMASMATRIZ: COMASMATRIZ coma corcheteA COMASVEC corcheteC { $1.push($4);$$=$1;}
+            |corcheteA COMASVEC corcheteC {$$ = [$2]}
+;
+
+ACCESOVEC: id corcheteA entero corcheteC
+            | id corcheteA entero corcheteC corcheteA entero corcheteC
+;
+
+TERNARIO: parentesisA EXPRESIONLOGICA parentesisC interrogacionCierra INSTRUCCIONTERNARIO dosPuntos INSTRUCCIONTERNARIO ptComa
+;
+
+TERNARIOEXP: parentesisA EXPRESIONLOGICA parentesisC interrogacionCierra EXPRESIONARITMETICA dosPuntos EXPRESIONARITMETICA ptComa
+;
+
+INSTRUCCIONTERNARIO: FUNCIONPRINT
+                    | FUNCIONPRINTLN
+                    | ASIGNACION
+                    | INCREMENTODECREMENTO
+                    | INSTRUCCIONLLAMAR
+
+;
+
+GRAFICARTS: GRAFICAR parentesisA parentesisC ptComa
+;
+
+LENGTHEXP: LENGTH parentesisA EXPRESIONARITMETICA parentesisC
+;
+
+TOCHARARRAYEXP: TOCHARARRAY parentesisA EXPRESIONARITMETICA parentesisC
+;
+
+INDEXOFEXP: id punto INDEXOF parentesisA EXPRESIONARITMETICA parentesisC
+;
+
+PUSHFUNCION: id punto PUSH parentesisA EXPRESIONARITMETICA parentesisC
+;
+
+POPFUNCION: id punto POP parentesisA EXPRESIONARITMETICA parentesisC ptComa
+;
+
+SPLICEFUNCION: id punto SPLICE parentesisA entero coma EXPRESIONARITMETICA parentesisC ptComa
 ;

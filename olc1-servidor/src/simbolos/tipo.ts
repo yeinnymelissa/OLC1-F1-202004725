@@ -7,5 +7,6 @@ export enum Tipo{
     NULL,
     VOID, 
     VECTOR,
+    MATRIZ,
     error
 }

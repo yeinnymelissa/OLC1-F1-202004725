@@ -6,8 +6,8 @@ import { Tipo } from "../simbolos/tipo"
 export class Literal extends Expresion {
 
     constructor(
-        private value: any,
-        private type: Tipo,
+        private valor: any,
+        private tipo: Tipo,
         line: number,
         column: number
     ) {
@@ -16,24 +16,37 @@ export class Literal extends Expresion {
 
     public run(env: Entorno): Retorno {
         
-        if (this.type == Tipo.INT)
-            return { value: Number(this.value), type: Tipo.INT }
-        else if (this.type == Tipo.STRING){
-            this.value = (this.value).replaceAll("\"","")
-            return { value: this.value, type: Tipo.STRING }
+        if (this.tipo == Tipo.INT)
+            return { valor: Number(this.valor), tipo: Tipo.INT }
+        else if (this.tipo == Tipo.STRING){
+            this.valor = (this.valor).replaceAll("\"","")
+            return { valor: this.valor, tipo: Tipo.STRING }
         }
-        else if (this.type == Tipo.BOOLEAN) {
-            if (this.value == "true") return { value: Boolean(true), type: Tipo.BOOLEAN }
-            else return { value: Boolean(false), type: Tipo.BOOLEAN }
-        }else if (this.type == Tipo.DOUBLE){
-            return { value: Number(this.value), type: Tipo.INT }
-        }else if(this.type == Tipo.CHAR){
-            this.value = (this.value).replaceAll("\'","")
-            return { value: this.value, type: Tipo.CHAR }
-        }else if(this.type == Tipo.NULL){
-            return { value: null, type: Tipo.NULL }
+        else if (this.tipo == Tipo.BOOLEAN) {
+            if (this.valor == "true") return { valor: Boolean(true), tipo: Tipo.BOOLEAN }
+            else return { valor: Boolean(false), tipo: Tipo.BOOLEAN }
+        }else if (this.tipo == Tipo.DOUBLE){
+            return { valor: Number(this.valor), tipo: Tipo.DOUBLE }
+        }else if(this.tipo == Tipo.CHAR){
+            this.valor = (this.valor).replaceAll("\'","")
+            return { valor: this.valor, tipo: Tipo.CHAR }
+        }else if(this.tipo == Tipo.NULL){
+            return { valor: null, tipo: Tipo.NULL }
         }
-        else return { value: this.value, type: Tipo.error }
+        else return { valor: this.valor, tipo: Tipo.error }
 
+    }
+
+    public ast(): string {
+        const nombre = `node_${this.line}_${this.column}_`
+        if (this.tipo == Tipo.STRING) return `
+        ${nombre};
+        ${nombre}[label="\\<Valor\\>\\n\\"${this.valor.toString()}\\""];
+        `
+
+        else return `
+        ${nombre};
+        ${nombre}[label="\\<Valor\\>\\n${this.valor.toString()}"];
+        `
     }
 }

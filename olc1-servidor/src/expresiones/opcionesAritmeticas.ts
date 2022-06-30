@@ -4,5 +4,6 @@ export enum opcionesAritmeticas {
     /*2*/  MULTIPLICACION,
     /*3*/  DIVISION,
     /*4*/  MODULO,
-    /*5*/  POTENCIA
+    /*5*/  POTENCIA,
+    /*6*/  NEGADO
 }
