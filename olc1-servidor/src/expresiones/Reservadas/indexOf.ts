@@ -36,7 +36,7 @@ export class indexOf extends Expresion{
         }else{
             if(vector != null){
                 if(vector.tipo == Tipo.VECINT || vector.tipo == Tipo.VECSTRING || vector.tipo == Tipo.VECBOOLEAN || vector.tipo == Tipo.VECDOUBLE || vector.tipo == Tipo.VECCHAR){
-                    retorno = { valor: vector.valor.indexOf(nodoExp), tipo: Tipo.INT}
+                    retorno = { valor: vector.valor.indexOf(nodoExp.valor), tipo: Tipo.INT}
                 }else{
                     const error = new Errores(this.line, this.column, "La variable no es un vector.", "Semántico");
                     singleton.add_errores(error);
