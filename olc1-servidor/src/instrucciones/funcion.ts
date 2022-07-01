@@ -33,6 +33,7 @@ export class InsFuncion extends Instruccion {
         if (c){
             const error = new Errores(this.line, this.column, "No se puede declarar la funcion con el nombre \""+this.name+"\" porque ya existe.", "Semántico");
             consola.add_errores(error);
+            console.log(error)
             return;
         } 
         

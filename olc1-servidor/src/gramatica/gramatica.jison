@@ -19,6 +19,7 @@
     const {IncrementoEx} = require('../expresiones/Aritmeticas/incrementoEx');
     const {Round} = require('../expresiones/Reservadas/round');
     const {toLower} = require('../expresiones/Reservadas/toLower');
+    const {toUpper} = require('../expresiones/Reservadas/toUpper');
     const {TypeOf} = require('../expresiones/Reservadas/typeOf');
     //Segunda tanda
     const {Llamada} = require('../expresiones/call');
@@ -31,6 +32,23 @@
     const {Continue} = require('../instrucciones/Transicion/continue');
     const {Return} = require('../instrucciones/Transicion/return');
     const {InsFuncion} = require('../instrucciones/funcion');
+
+    //Tercera Tanda
+    const {LlamadaIns} = require('../instrucciones/callInstruccion');
+    const {OpTernario} = require('../expresiones/opTernario');
+    const {Vector} = require('../instrucciones/Arrays/vector');
+    const {OpTernarioIns} = require('../instrucciones/opTernarioIns');
+    const {GraficarTS} = require('../instrucciones/graficarTS');
+
+    //cuarta Tanda
+    const {Push} = require('../expresiones/Arrays/push');
+    const {VectorAcceso} = require('../expresiones/Arrays/vectorAcceso');
+    const {indexOf} = require('../expresiones/Reservadas/indexOf');
+    const {Length} = require('../expresiones/Reservadas/length');
+    const {toCharArray} = require('../expresiones/Reservadas/toCharArray');
+    const {Pop} = require('../instrucciones/Arrays/pop');
+    const {PushIns} = require('../instrucciones/Arrays/pushIns');
+    const {AsignarVector} = require('../instrucciones/asignarVector');
 
     var cadena = '';
 %}
@@ -156,8 +174,6 @@ bool    "true"|"false"
 %left POTENCIA
 %right NOT
 %left umenos
-%left parentesisA 
-
 %start ini
 
 %%
@@ -171,12 +187,15 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION { $1.push($2); $$=$1;}
 
 INSTRUCCION : DECLARACION ptComa { $$=$1; } 
             | ASIGNACION ptComa { $$=$1; } 
-            | INCREMENTODECREMENTO ptComa 
-            | SENTENCIAIF  
+            | id incremento ptComa{$$= new Incremento($1, @1.first_line, @1.first_column);}
+            | id decremento ptComa{$$= new Decremento($1, @1.first_line, @1.first_column);}
+            | incremento id ptComa{$$= new Incremento($2, @1.first_line, @1.first_column);}
+            | decremento id ptComa{$$= new Decremento($2, @1.first_line, @1.first_column);}
+            | SENTENCIAIF  { $$=$1; } 
             | SENTENCIASWITCH 
-            | SENTENCIAFOR  
+            | SENTENCIAFOR  { $$=$1; } 
             | SENTENCIADOWHILE 
-            | SENTENCIAWHILE  
+            | SENTENCIAWHILE  { $$=$1; } 
             | BREAK ptComa {$$= new Break( @1.first_line, @1.first_column);}
             | CONTINUE ptComa {$$= new Continue( @1.first_line, @1.first_column);}
             | INSTRUCCIONLLAMAR ptComa { $$=$1; } 
@@ -184,20 +203,20 @@ INSTRUCCION : DECLARACION ptComa { $$=$1; }
             | METODO { $$=$1; } 
             | FUNCIONPRINTLN ptComa { $$=$1; } 
             | FUNCIONPRINT ptComa { $$=$1; } 
-            | FUNCIONTYPEOF ptComa 
+            | FUNCIONTYPEOF ptComa { $$=$1; } 
             | INSTRUCCIONRETURN ptComa { $$=$1; } 
-            | VECTORES ptComa  
-            | GRAFICARTS 
-            | TERNARIO
-            | PUSHFUNCION ptComa
-            | POPFUNCION 
+            | VECTORES ptComa  { $$=$1; } 
+            | GRAFICARTS { $$=$1; } 
+            | TERNARIO { $$=$1; } 
+            | PUSHFUNCION ptComa { $$=$1; } 
+            | POPFUNCION { $$=$1; } 
             | SPLICEFUNCION 
             | BLOQUE { $$=$1; } 
             | error    ptComa  { 
                 var consola = Singleton.getInstance(); 
-                const error = new Errores(yylloc.first_line , yylloc.first_column,`El caracter ${(this.terminals_[symbol] || symbol)} no se esperaba en esta posicion`,"Sintáctico");
+                const error = new Errores(this._$.first_line , this._$.first_column,"El caracter "+ yytext +" no se esperaba en esta posicion","Sintáctico");
                 consola.add_errores(error);
-                console.log("Error sintactico en la linea"+(yylineno+1));
+                console.log("Error sintactico en la linea "+(yylineno+1));
                  }
 ;
 
@@ -208,7 +227,7 @@ DECLARACION : TIPODATO IDS igual EXPRESIONARITMETICA  {$$= new Declaracion($2,$1
 ;
 
 ASIGNACION : id igual EXPRESIONARITMETICA  {$$= new Asignar($1,$3,@1.first_line, @1.first_column );}
-            | id corcheteA entero corcheteC igual EXPRESIONARITMETICA
+            | id corcheteA entero corcheteC igual EXPRESIONARITMETICA {$$= new AsignarVector($1,parseInt($3), $6,@1.first_line, @1.first_column );}
             | id corcheteA entero corcheteC corcheteA entero corcheteC igual EXPRESIONARITMETICA
 ;
 
@@ -262,11 +281,10 @@ EXPRESIONARITMETICA:  EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  {$$= new Ari
                     | EXPRESIONARITMETICA MODULO EXPRESIONARITMETICA {$$= new Aritmeticas($1,$3,opcionesAritmeticas.MODULO, @1.first_line, @1.first_column);}
                     | EXPRESIONARITMETICA POTENCIA EXPRESIONARITMETICA {$$= new Aritmeticas($1,$3,opcionesAritmeticas.POTENCIA, @1.first_line, @1.first_column);}
                     | RESTA EXPRESIONARITMETICA %prec umenos {$$= new Aritmeticas(null,$2,opcionesAritmeticas.NEGADO, @1.first_line, @1.first_column);}
-                    | parentesisA EXPRESIONARITMETICA parentesisC {$$=$2;}
                     | id  {$$= new Acceso($1,@1.first_line, @1.first_column);}   
                     | IGUALACIONDEDATO   {$$=$1;}
-                    | EXPRESIONLLAMAR 
-                    | FUNCIONTYPEOF 
+                    | EXPRESIONLLAMAR {$$=$1;}
+                    | FUNCIONTYPEOF {$$=$1;}
                     | id incremento {$$= new IncrementoEx($1, @1.first_line, @1.first_column);}
                     | id decremento {$$= new DecrementoEx($1, @1.first_line, @1.first_column);}
                     | incremento id {$$= new IncrementoEx($2, @1.first_line, @1.first_column);}
@@ -274,11 +292,22 @@ EXPRESIONARITMETICA:  EXPRESIONARITMETICA SUMA EXPRESIONARITMETICA  {$$= new Ari
                     | ROUNDEXP {$$=$1;}
                     | TOLOWEREXP {$$=$1;}
                     | TOUPPEREXP {$$=$1;}
-                    | ACCESOVEC 
-                    | TOCHARARRAYEXP 
-                    | INDEXOFEXP 
-                    | LENGTHEXP
-                    | PUSHFUNCION 
+                    | parentesisA EXPRESIONARITMETICA parentesisC {$$=$2;}
+                    | ACCESOVEC {$$=$1;}
+                    | TOCHARARRAYEXP {$$=$1;}
+                    | INDEXOFEXP { $$=$1; } 
+                    | LENGTHEXP {$$=$1;}
+                    | id punto PUSH parentesisA EXPRESIONARITMETICA parentesisC  {$$= new Push($1, $5, @1.first_line, @1.first_column);}
+                    | error    ptComa  { 
+                        var consola = Singleton.getInstance(); 
+                        const errorS = new Errores(this._$.first_line , this._$.first_column,"El caracter "+ yytext +" no se esperaba en esta posicion","Sintáctico");
+                        consola.add_errores(errorS);
+                        console.log("Error sintactico en la linea "+(yylineno+1));
+                        }
+;
+
+PARENTESISPRUEBA: 
+                | 
 ;
 
 EXPRESIONESRELACIONALES: EXPRESIONESRELACIONALES mayorQue EXPRESIONESRELACIONALES {$$= new Relacional($1,$3,opcionesRelacionales.MAYOR, @1.first_line, @1.first_column);}
@@ -297,14 +326,11 @@ EXPRESIONLOGICA: EXPRESIONLOGICA OR EXPRESIONLOGICA {$$= new Logicas($1,$3,opcio
                 | EXPRESIONESRELACIONALES {$$=$1;}
 ;
 
-INCREMENTODECREMENTOFOR: INCREMENTODECREMENTO {$$=$1;}
-                        | FORINCREMENTODECREMENTO {$$=$1;}
-;
-
-INCREMENTODECREMENTO: id incremento {$$= new Incremento($1, @1.first_line, @1.first_column);}
+INCREMENTODECREMENTOFOR: id incremento {$$= new Incremento($1, @1.first_line, @1.first_column);}
                     | id decremento {$$= new Decremento($1, @1.first_line, @1.first_column);}
                     | incremento id {$$= new Incremento($2, @1.first_line, @1.first_column);}
                     | decremento id {$$= new Decremento($2, @1.first_line, @1.first_column);}
+                    | FORINCREMENTODECREMENTO {$$=$1;}
 ;
 
 FORINCREMENTODECREMENTO: id igual SUMARESTA {$$=$3;}
@@ -326,10 +352,9 @@ METODO: VOID id parentesisA PARAMETROS parentesisC BLOQUE  {$$= new InsFuncion($
         | VOID id parentesisA parentesisC BLOQUE {$$= new InsFuncion($2,$5,[], Tipo.VOID, @1.first_line, @1.first_column);}
 ;
 
-PARAMETROS: PARAMETROS coma EXPRESIONARITMETICA { $1.push($3);$$=$1;}
-        | EXPRESIONARITMETICA {$$ = [$1]}
+PARAMETROS: PARAMETROS coma TIPODATO id{ $1.push(new Declaracion([$4], $3, null, true, @1.first_line, @1.first_column)); $$ = $1;}
+        | TIPODATO id { $$ = [new Declaracion([$2],$1, null, true, @1.first_line, @1.first_column)]; }
 ;
-
 
 FUNCION: TIPODATO id parentesisA PARAMETROS parentesisC BLOQUE {$$= new InsFuncion($2,$6,$4, $1, @1.first_line, @1.first_column);}
         | TIPODATO id parentesisA parentesisC BLOQUE {$$= new InsFuncion($2,$5,[],$1, @1.first_line, @1.first_column);}
@@ -339,8 +364,8 @@ PARAMETROSCALL: PARAMETROSCALL coma EXPRESIONARITMETICA  { $1.push($3);$$=$1;}
             | EXPRESIONARITMETICA {$$ = [$1]}
 ;
 
-INSTRUCCIONLLAMAR: CALL id parentesisA PARAMETROSCALL parentesisC 
-                | CALL id parentesisA parentesisC 
+INSTRUCCIONLLAMAR: CALL id parentesisA PARAMETROSCALL parentesisC {$$= new LlamadaIns($2,$4, @1.first_line, @1.first_column);}
+                | CALL id parentesisA parentesisC {$$= new LlamadaIns($2,[], @1.first_line, @1.first_column);}
 ;
 
 EXPRESIONLLAMAR: id parentesisA PARAMETROSCALL parentesisC {$$= new Llamada($1,$3, @1.first_line, @1.first_column);}
@@ -352,6 +377,7 @@ INSTRUCCIONRETURN: RETORNO {$$= new Return(null, @1.first_line, @1.first_column)
 ; 
 
 FUNCIONPRINTLN: PRINTLN parentesisA EXPRESIONLOGICA parentesisC {$$= new Println($3, @1.first_line, @1.first_column);}
+               | PRINTLN parentesisA parentesisC {$$= new Println(null, @1.first_line, @1.first_column);}
 ;
 
 FUNCIONPRINT: PRINT parentesisA EXPRESIONLOGICA parentesisC {$$= new Print($3, @1.first_line, @1.first_column);}
@@ -373,8 +399,9 @@ TOUPPEREXP: TOUPPER parentesisA EXPRESIONARITMETICA parentesisC {$$= new toUpper
 ROUNDEXP: ROUND parentesisA EXPRESIONARITMETICA parentesisC {$$= new Round($3,@1.first_line, @1.first_column)}
 ;
 
-VECTORES: TIPODATO id corcheteA corcheteC igual NEW TIPODATO corcheteA entero corcheteC
-        | TIPODATO id corcheteA corcheteC igual corcheteA COMASVEC corcheteC
+VECTORES: TIPODATO id corcheteA corcheteC igual NEW TIPODATO corcheteA entero corcheteC  {$$= new Vector($2, $1, $7, $9, false,@1.first_line, @1.first_column)}
+        | TIPODATO id corcheteA corcheteC igual corcheteA COMASVEC corcheteC {$$= new Vector($2,$1,null, $7, false,@1.first_line, @1.first_column)}
+        | TIPODATO id corcheteA corcheteC igual EXPRESIONARITMETICA {$$= new Vector($2,$1,null, $6, false,@1.first_line, @1.first_column)}
         | TIPODATO id corcheteA corcheteC corcheteA corcheteC igual NEW TIPODATO corcheteA entero corcheteC corcheteA entero corcheteC
         | TIPODATO id corcheteA corcheteC corcheteA corcheteC igual corcheteA COMASMATRIZ corcheteC
 ;
@@ -387,40 +414,41 @@ COMASMATRIZ: COMASMATRIZ coma corcheteA COMASVEC corcheteC { $1.push($4);$$=$1;}
             |corcheteA COMASVEC corcheteC {$$ = [$2]}
 ;
 
-ACCESOVEC: id corcheteA entero corcheteC
+ACCESOVEC: id corcheteA entero corcheteC {$$= new VectorAcceso($1,parseInt($3),@1.first_line, @1.first_column)}
             | id corcheteA entero corcheteC corcheteA entero corcheteC
 ;
 
-TERNARIO: parentesisA EXPRESIONLOGICA parentesisC interrogacionCierra INSTRUCCIONTERNARIO dosPuntos INSTRUCCIONTERNARIO ptComa
+TERNARIO: parentesisA EXPRESIONLOGICA parentesisC interrogacionCierra INSTRUCCIONTERNARIO dosPuntos INSTRUCCIONTERNARIO ptComa {$$= new OpTernarioIns($2, $5, $7,@1.first_line, @1.first_column)}
+        
 ;
 
-TERNARIOEXP: parentesisA EXPRESIONLOGICA parentesisC interrogacionCierra EXPRESIONARITMETICA dosPuntos EXPRESIONARITMETICA ptComa
+INSTRUCCIONTERNARIO: FUNCIONPRINT {$$=$1;}
+                    | FUNCIONPRINTLN {$$=$1;} 
+                    | ASIGNACION {$$=$1;}
+                    | id incremento {$$= new Incremento($1, @1.first_line, @1.first_column);}
+                    | id decremento {$$= new Decremento($1, @1.first_line, @1.first_column);}
+                    | incremento id {$$= new Incremento($2, @1.first_line, @1.first_column);}
+                    | decremento id {$$= new Decremento($2, @1.first_line, @1.first_column);}
+                    | INSTRUCCIONLLAMAR {$$=$1;}
+
 ;
 
-INSTRUCCIONTERNARIO: FUNCIONPRINT
-                    | FUNCIONPRINTLN
-                    | ASIGNACION
-                    | INCREMENTODECREMENTO
-                    | INSTRUCCIONLLAMAR
-
+GRAFICARTS: GRAFICAR parentesisA parentesisC ptComa {$$= new GraficarTS(@1.first_line, @1.first_column)}
 ;
 
-GRAFICARTS: GRAFICAR parentesisA parentesisC ptComa
+LENGTHEXP: LENGTH parentesisA EXPRESIONARITMETICA parentesisC {$$= new Length($3,@1.first_line, @1.first_column)}
 ;
 
-LENGTHEXP: LENGTH parentesisA EXPRESIONARITMETICA parentesisC
+TOCHARARRAYEXP: TOCHARARRAY parentesisA EXPRESIONARITMETICA parentesisC {$$= new toCharArray($3,@1.first_line, @1.first_column)}
 ;
 
-TOCHARARRAYEXP: TOCHARARRAY parentesisA EXPRESIONARITMETICA parentesisC
+INDEXOFEXP: id punto INDEXOF parentesisA EXPRESIONARITMETICA parentesisC {$$= new indexOf($1, $5, @1.first_line, @1.first_column);}
 ;
 
-INDEXOFEXP: id punto INDEXOF parentesisA EXPRESIONARITMETICA parentesisC
+PUSHFUNCION: id punto PUSH parentesisA EXPRESIONARITMETICA parentesisC {$$= new PushIns($1, $5, @1.first_line, @1.first_column);}
 ;
 
-PUSHFUNCION: id punto PUSH parentesisA EXPRESIONARITMETICA parentesisC
-;
-
-POPFUNCION: id punto POP parentesisA EXPRESIONARITMETICA parentesisC ptComa
+POPFUNCION: id punto POP parentesisA EXPRESIONARITMETICA parentesisC ptComa {$$= new Pop($1, @1.first_line, @1.first_column);}
 ;
 
 SPLICEFUNCION: id punto SPLICE parentesisA entero coma EXPRESIONARITMETICA parentesisC ptComa

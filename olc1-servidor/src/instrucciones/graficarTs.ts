@@ -17,6 +17,8 @@ export class GraficarTS extends Instruccion {
         let simbolos_tmp: string= singleton.get_simbolos();
 
         singleton.add_graficarTs(simbolos_tmp)
+
+        console.log(singleton.get_graficarTs())
         
     }
     public ast(): void {

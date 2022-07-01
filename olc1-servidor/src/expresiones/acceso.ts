@@ -24,6 +24,7 @@ export class Acceso extends Expresion {
             var singleton = Singleton.getInstance();
             const error = new Errores(this.line, this.column, "Variable inexistente", "Semántico");
             singleton.add_errores(error);
+            console.log(error)
             return {valor: null, tipo: Tipo.error}
         }
 

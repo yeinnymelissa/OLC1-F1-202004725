@@ -2,10 +2,11 @@ import { Expresion } from "../../abstract/expresion";
 import { Instruccion } from "../../abstract/instruccion";
 import { Singleton } from "../../patronSingleton/singleton";
 import { Entorno } from "../../simbolos/entorno";
+import { Tipo } from "../../simbolos/tipo";
 
 export class Println extends Instruccion {
     constructor(        
-        public expresion : Expresion,
+        public expresion : Expresion | null,
         line: number, 
         column : number
     ) {
@@ -13,18 +14,47 @@ export class Println extends Instruccion {
     }
 
     public run(env: Entorno) {
-
+        const s= Singleton.getInstance()
         //console.log(this.expresion) 
         //console.log("---------------");
-        
-        const tmp= this.expresion.run(env);
-        console.log("prueba")
-        console.log(tmp);
-        console.log(tmp.tipo); 
-        //console.log(">>",tmp.value); //esto es lo que tienen que mostrar al usuario
-        
-        const s= Singleton.getInstance()
-        s.add_consola(tmp.valor+"\n")
+        if(this.expresion != null){
+            const tmp= this.expresion.run(env);
+            if(tmp.tipo == Tipo.VECINT || tmp.tipo == Tipo.VECBOOLEAN || tmp.tipo == Tipo.VECDOUBLE){
+                s.add_consola("\[")
+                for (let i = 0; i < tmp.valor.length; i++) {
+                    if(i==0){
+                        s.add_consola(tmp.valor[i])
+                    }else{
+                        s.add_consola(","+tmp.valor[i])
+                    }
+                }
+                s.add_consola("\]\n")
+            }else if(tmp.tipo == Tipo.VECSTRING){
+                s.add_consola("\[")
+                for (let i = 0; i < tmp.valor.length; i++) {
+                    if(i==0){
+                        s.add_consola(tmp.valor[i])
+                    }else{
+                        s.add_consola(", "+"\""+tmp.valor[i]+"\"")
+                    }
+                }
+                s.add_consola("\]\n")
+            }else if(tmp.tipo == Tipo.VECCHAR){
+                s.add_consola("\[")
+                for (let i = 0; i < tmp.valor.length; i++) {
+                    if(i==0){
+                        s.add_consola(tmp.valor[i])
+                    }else{
+                        s.add_consola(", "+"\'"+tmp.valor[i]+"\'")
+                    }
+                }
+                s.add_consola("\]\n")
+            }else{
+                s.add_consola(tmp.valor+"\n")
+            }
+        }else{
+            s.add_consola("\n")
+        }
         
     }
 

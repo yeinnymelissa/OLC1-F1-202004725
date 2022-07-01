@@ -35,6 +35,26 @@ export class TypeOf extends Expresion{
                 retorno = { valor: "string", tipo: Tipo.STRING}
             }else if(nodoExp.tipo == Tipo.BOOLEAN){
                 retorno = { valor: "boolean", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.VECINT){
+                retorno = { valor: "vector_int", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.VECSTRING){
+                retorno = { valor: "vector_string", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.VECBOOLEAN){
+                retorno = { valor: "vector_boolean", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.VECCHAR){
+                retorno = { valor: "vector_char", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.VECDOUBLE){
+                retorno = { valor: "vector_double", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.MINT){
+                retorno = { valor: "matriz_int", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.MSTRING){
+                retorno = { valor: "matriz_string", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.MBOOLEAN){
+                retorno = { valor: "matriz_boolean", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.MCHAR){
+                retorno = { valor: "matriz_char", tipo: Tipo.STRING}
+            }else if(nodoExp.tipo == Tipo.MDOUBLE){
+                retorno = { valor: "matriz_double", tipo: Tipo.STRING}
             }else{
                 //no tiene que hacer la conversión y solo dar un error semántico
                 const error = new Errores( this.line, this.column, `No es posible aplicar la funcion TypeOf() a un valor desconocido`, "Semántico");

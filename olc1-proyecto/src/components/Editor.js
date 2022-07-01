@@ -1,10 +1,13 @@
 import * as React from 'react';
 import FileSaver from "file-saver";
 import axios from 'axios';
+import { Graphviz } from 'graphviz-react';
+import { useState } from 'react';
 
 function Editor(){
 
     let contador = 0;
+    const [astGraph, setAstGraph] = useState("digraph {a -> b; c; d -> c; a -> d;}");
 
     function leerArchivo(e) {
 
@@ -170,7 +173,7 @@ function Editor(){
     function reporteErrores(){
         const errores = document.querySelector('#body-err');
         axios
-            .post('http://localhost:8000/prueba')
+            .post('http://localhost:8000/errores')
             .then(({ data }) => {
                 //si sale bien ejecuta esto
                 errores.innerHTML = '';
@@ -179,6 +182,59 @@ function Editor(){
                 }
 
                 errores.innerHTML = data;
+            })
+            .catch((err) => {
+                //si sale mal ejecuta esto
+                console.log(err);
+            });
+    }
+
+    function graficaTS(){
+        axios
+            .post('http://localhost:8000/grafica')
+            .then(({ data }) => {
+                //si sale bien ejecuta esto
+                if (data.err) {
+                    return;
+                }
+                setAstGraph(data)
+            })
+            .catch((err) => {
+                //si sale mal ejecuta esto
+                console.log(err);
+            });
+    }
+
+    function reporteTablaSimbolos(){
+        const botonesCarrusel = document.querySelector('#botonesCarrusel');
+        const contenidoCarrusel = document.querySelector('#contenidoCarrusel');
+        axios
+            .post('http://localhost:8000/tablaSimbolos')
+            .then(({ data }) => {
+                //si sale bien ejecuta esto
+                /*<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <div className="carousel-item active">
+                    <p className="d-block w-100">
+                    Hola</p>
+                </div>*/ 
+                var botones = "";
+                var carrusel = "";
+                for (var i = 0; i < data.length; i++) {
+                    if(i === 0){
+                        botones += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\""+i+"\" class=\"active\" aria-current=\"true\" aria-label=\"Slide"+i+ "\"></button>\n"
+                        carrusel += "<div class=\"carousel-item active\">\n <div class=\"d-block w-100\">\n " +data[i]+"\n</div> \n</div>\n"
+                    }else{
+                        botones += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\""+i+"\" aria-label=\"Slide"+i+ "\"></button>\n"
+                        carrusel += "<div class=\"carousel-item\">\n <div class=\"d-block w-100\">\n " +data[i]+"\n</div> \n</div>\n"
+                    }
+                }
+                if (data.err) {
+                    return;
+                }
+
+                botonesCarrusel.innerHTML = botones;
+                contenidoCarrusel.innerHTML = carrusel;
             })
             .catch((err) => {
                 //si sale mal ejecuta esto
@@ -204,9 +260,9 @@ function Editor(){
                         Reportes
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteAST">Reporte AST</button></li>
-                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteErrores">Reporte de errores</button></li>
-                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteTS">Reporte TS</button></li>
+                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteAST" onClick={graficaTS}>Reporte AST</button></li>
+                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteErrores" onClick={reporteErrores}>Reporte de errores</button></li>
+                        <li><button className="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reporteTS" onClick={reporteTablaSimbolos}>Reporte TS</button></li>
                     </ul>
                 </div>       
                 <button type="button" className="btn btn-primary izq" onClick={run}>Run</button>         
@@ -219,7 +275,7 @@ function Editor(){
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body" id='body-ast'>
-                        Hola
+                        <Graphviz dot={astGraph} />
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
@@ -235,12 +291,6 @@ function Editor(){
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body" id='body-err'>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
-
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
@@ -257,12 +307,12 @@ function Editor(){
                     </div>
                     <div className="modal-body color-ts" id='body-ts'>
                     <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
-                        <div className="carousel-indicators">
+                        <div className="carousel-indicators" id='botonesCarrusel'>
                             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
                             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
                         </div>
-                        <div className="carousel-inner">
+                        <div className="carousel-inner" id='contenidoCarrusel'>
                             <div className="carousel-item active">
                                 <p className="d-block w-100">
                                 Hola</p>
@@ -276,13 +326,13 @@ function Editor(){
                                 Hola</p>
                             </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
+                        <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
+                        <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Next</span>
                         </button>
                     </div>
                     </div>

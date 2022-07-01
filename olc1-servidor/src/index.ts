@@ -30,6 +30,24 @@ app.post('/prueba', function (request: any, response: any) {
     response.send(variable)
 })
 
+app.post('/errores', function (request: any, response: any) {
+    let singleton = Singleton.getInstance()
+
+    response.send(singleton.get_errores())
+})
+
+app.post('/tablaSimbolos', function (request: any, response: any) {
+    let singleton = Singleton.getInstance()
+
+    response.send(singleton.get_graficarTs())
+})
+
+app.post('/grafica', function (request: any, response: any) {
+    let singleton = Singleton.getInstance()
+
+    response.send(singleton.getAst())
+})
+
 app.post('/run', function (request: any, response: any) {
     const data = request.body.datos;
     console.log("Estoy analizando");
@@ -44,6 +62,8 @@ app.post('/run', function (request: any, response: any) {
     for (const elemento  of ast) {
         try {
             if(elemento instanceof InsFuncion){
+                console.log("funcion")
+                console.log(elemento)
                 elemento.run(env_padre)
             }
         } catch (error) {
@@ -63,6 +83,34 @@ app.post('/run', function (request: any, response: any) {
             console.log(error);
         }
     }
+
+    
+    singleton.addAst("digraph G { \nnode[shape=box];\nnodeInicio[label=\"<\\ INICIO \\>\"];\n\n");
+    var cont1 = 0;
+    var inst_line_anterior = 0;
+    var inst_col_anterior = 0;
+
+    for (const instruccion of ast) {
+        try {
+            if (cont1 == 0) {
+                singleton.addAst(`nodeInicio->instruccion_${instruccion.line}_${instruccion.column}_;\n`);
+                inst_line_anterior = instruccion.line;
+                inst_col_anterior = instruccion.column;
+            } else {
+                singleton.addAst(`instruccion_${inst_line_anterior}_${inst_col_anterior}_->instruccion_${instruccion.line}_${instruccion.column}_;\n`);
+                inst_line_anterior = instruccion.line;
+                inst_col_anterior = instruccion.column;
+            }
+
+            instruccion.ast()
+
+        } catch (error) {
+            console.log("soy un error" + error)
+        }
+        cont1++;
+    }
+
+    singleton.addAst("\n}");
 
     console.log(singleton.get_consola());
     response.send(singleton.get_consola());

@@ -23,13 +23,13 @@ int iterador= 1;
         int a3=a1+2;
         graficar_ts();
         {
-            int a1=(5>10*5+2-30+1-(10*2))? 30 : 0;
+            int a1=30;
 
-            int a2=(a1==30)?a1+1 : 0;
-            int a3=(a1==30)?a1+2 : 0;
+            int a2=31;
+            int a3=32;
             (curso=="ipc")? println("OPEADOR TERMARIO COMO INSTRUCCION ... NO!"): println ("OPEADOR TERMARIO COMO INSTRUCCION ... SI!");
             (curso+"_june"=="olc1_june")? println("OPEADOR TERMARIO COMO INSTRUCCION ... SI!"): println ("OPEADOR TERMARIO COMO INSTRUCCION ... NO!");
-            global1 = (a1==((10+5)*(1+1)))?  'm' :'f';
+            global1 ='m';
 
             if(global1=='m'){
                 println("OPEADOR TERMARIO COMO EXPRESION... SI! ");

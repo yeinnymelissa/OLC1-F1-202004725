@@ -43,7 +43,6 @@ export class Entorno {
   }
 
   public guardar_funcion_metodo(nombre: string, valor: any, tipo: Tipo, editable: boolean, ambito: string, line: number, column: number): boolean {
-    
     if(!this.buscar_metodo_funcion(nombre)){
       let simbol:Simbolo = new Simbolo(valor, nombre, tipo,editable,this.id, ambito, line, column);
       this.tablaSimbolos_metodos_funciones.set(nombre, simbol);
@@ -108,7 +107,7 @@ export class Entorno {
 public get_metodos_funciones(nombre: string): Simbolo | undefined | null {
   let env: Entorno | null = this;
   while (env != null) {
-      if (env.tablaSimbolos_metodos_funciones.has(nombre)) return env.tablaSimbolos.get(nombre);
+      if (env.tablaSimbolos_metodos_funciones.has(nombre)) return env.tablaSimbolos_metodos_funciones.get(nombre);
       env = env.anterior;
   }
   return null;

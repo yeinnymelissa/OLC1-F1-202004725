@@ -6,7 +6,15 @@ export enum Tipo{
     DOUBLE,
     NULL,
     VOID, 
-    VECTOR,
-    MATRIZ,
+    VECINT,
+    VECSTRING,
+    VECBOOLEAN,
+    VECCHAR,
+    VECDOUBLE,
+    MINT,
+    MSTRING,
+    MBOOLEAN,
+    MCHAR,
+    MDOUBLE,
     error
 }

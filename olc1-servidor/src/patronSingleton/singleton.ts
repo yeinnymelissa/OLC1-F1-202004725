@@ -78,7 +78,9 @@ export class Singleton {
         this.simbolos +=
         "<tr>" +
         "<td>" + this.getTipo(data.tipo) + "</td>" +
-        "<td>" + data.err + "</td>" +
+        "<td>" + data.id + "</td>" +
+        "<td>" + data.valor + "</td>" +
+        "<td>" + data.numeroEnv + "</td>" +
         "<td>" + data.line + "</td>" +
         "<td>" + data.column + "</td>" +
         "</tr>";
@@ -87,8 +89,10 @@ export class Singleton {
         return `
         <table class=\"table table-striped\" border=1 style="width: 75%;margin: 0 auto;" cellpadding ="5">
             <tr class=\"table-dark\">
-                <th>Tipo de error</th>
-                <th>Descripcion</th>
+                <th>Tipo</th>
+                <th>Identificador</th>
+                <th>Valor</th>
+                <th>Identificador de entorno</th>
                 <th>Línea</th>
                 <th>Columna</th>
             </tr>${this.simbolos}
@@ -126,6 +130,16 @@ export class Singleton {
                 return "boolean";
             case Tipo.VOID:
                 return "void";
+            case Tipo.VECINT:
+                return "int[]";
+            case Tipo.VECDOUBLE:
+                return "double[]";
+            case Tipo.VECCHAR:
+                return "char[]";
+            case Tipo.VECSTRING:
+                return "string[]";
+            case Tipo.VECBOOLEAN:
+                return "boolean[]";
             default:
                 return "error";
         }
